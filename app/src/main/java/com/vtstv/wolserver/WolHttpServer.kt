@@ -1,4 +1,4 @@
-package com.firetv.wol
+package com.vtstv.wolserver
 
 import android.util.Log
 import com.google.gson.Gson
@@ -11,11 +11,11 @@ import java.net.InetAddress
 import java.util.*
 
 /**
- * Embedded HTTP server for the WOL Fire TV application.
+ * Embedded HTTP server for the Simple WOL Server application.
  * Provides REST endpoints for Wake-on-LAN functionality and configuration management.
  * 
  * Copyright (c) 2025 Murr
- * https://github.com/vtstv/WOLFireTV
+ * https://github.com/vtstv/wolserver
  */
 class WolHttpServer(
     private val port: Int,
@@ -82,7 +82,7 @@ class WolHttpServer(
             <!DOCTYPE html>
             <html>
             <head>
-                <title>WOL Fire TV - Control Panel</title>
+                <title>Simple WOL Server - Control Panel</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1">
                 <style>
                     body { font-family: Arial, sans-serif; margin: 20px; background-color: #1a1a1a; color: #fff; }
@@ -107,7 +107,7 @@ class WolHttpServer(
                 <div class="container">
                     <!-- Login Form -->
                     <div id="loginForm" class="login-form">
-                        <h2>� WOL Fire TV Login</h2>
+                        <h2>� Simple WOL Server Login</h2>
                         <div class="row">
                             <label>Password:</label>
                             <input type="password" id="loginPassword" placeholder="Enter password" style="width: 200px;">
@@ -119,7 +119,7 @@ class WolHttpServer(
                     <!-- Main Interface -->
                     <div id="mainInterface" class="hidden">
                         <div class="header">
-                            <h1>🔥 WOL Fire TV Control Panel</h1>
+                            <h1>🔥 Simple WOL Server Control Panel</h1>
                             <p>Server running on <strong>$serverIpAddress:${config.httpPort}</strong></p>
                         </div>
                         
@@ -191,7 +191,7 @@ class WolHttpServer(
                         </div>
                         
                         <div class="footer">
-                            <p>WOL Fire TV v1.0.0 | Copyright © 2025 Murr | <a href="https://github.com/vtstv/WOLFireTV" style="color: #007acc;">GitHub</a></p>
+                            <p>Simple WOL Server v1.0.5 | Copyright © 2025 Murr | <a href="https://github.com/vtstv/wolserver" style="color: #007acc;">GitHub</a></p>
                         </div>
                     </div>
                 </div>
@@ -366,7 +366,7 @@ class WolHttpServer(
         val response = mapOf(
             "status" to "OK",
             "timestamp" to System.currentTimeMillis(),
-            "server" to "WOL Fire TV",
+            "server" to "Simple WOL Server",
             "version" to "1.0"
         )
         return newFixedLengthResponse(Response.Status.OK, "application/json", gson.toJson(response))

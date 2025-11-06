@@ -1,4 +1,4 @@
-package com.firetv.wol
+package com.vtstv.wolserver
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -7,11 +7,11 @@ import com.google.gson.reflect.TypeToken
 import java.net.InetAddress
 
 /**
- * Configuration manager for the WOL Fire TV application.
+ * Configuration manager for the Simple WOL Server application.
  * Handles persistent storage of configuration parameters using SharedPreferences.
  * 
  * Copyright (c) 2025 Murr
- * https://github.com/vtstv/WOLFireTV
+ * https://github.com/vtstv/wolserver
  */
 data class WolConfig(
     var authToken: String = "default_token_change_me",

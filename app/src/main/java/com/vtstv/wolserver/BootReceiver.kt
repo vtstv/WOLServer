@@ -1,4 +1,4 @@
-package com.firetv.wol
+package com.vtstv.wolserver
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -10,7 +10,7 @@ import android.util.Log
  * This ensures the HTTP server is available immediately after Fire TV startup.
  * 
  * Copyright (c) 2025 Murr
- * https://github.com/vtstv/WOLFireTV
+ * https://github.com/vtstv/wolserver
  */
 class BootReceiver : BroadcastReceiver() {
 

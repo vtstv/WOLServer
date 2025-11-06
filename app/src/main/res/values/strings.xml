@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">WOL Fire TV</string>
-    <string name="service_description">Wake-on-LAN background service for Fire TV</string>
-    <string name="notification_title">WOL Fire TV</string>
+    <string name="app_name">Simple WOL Server</string>
+    <string name="service_description">Wake-on-LAN background service</string>
+    <string name="notification_title">Simple WOL Server</string>
     <string name="notification_text">HTTP server running</string>
 </resources>

@@ -1,6 +1,8 @@
-# WOL Fire TV - Wake-on-LAN for Amazon Fire TV Stick 4K
+# Simple WOL Server - Wake-on-LAN for Android TV
 
-Android app that runs on Fire TV to provide Wake-on-LAN functionality via HTTP API and web interface.
+Android app that runs on Android TV to provide Wake-on-LAN functionality via HTTP API and web interface.
+
+> **Disclaimer**: This app was not created or endorsed by Amazon. Compatible with Android TV devices including Fire TV.
 
 ## ✨ Features
 

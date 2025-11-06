@@ -1,4 +1,4 @@
-package com.firetv.wol
+package com.vtstv.wolserver
 
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +16,7 @@ import java.net.InetAddress
  * Total: 102 bytes
  * 
  * Copyright (c) 2025 Murr
- * https://github.com/vtstv/WOLFireTV
+ * https://github.com/vtstv/wolserver
  */
 class WakeOnLan {
     

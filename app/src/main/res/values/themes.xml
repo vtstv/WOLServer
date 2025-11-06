@@ -9,7 +9,22 @@
         <item name="android:textColorPrimary">#ffffff</item>
         <item name="android:textColorSecondary">#cccccc</item>
         <item name="android:windowContentOverlay">@null</item>
+        <item name="alertDialogTheme">@style/FireTVAlertDialogTheme</item>
     </style>
     
     <style name="Theme.Leanback.Browse" parent="Theme.Leanback" />
+    
+    <!-- AlertDialog theme for Fire TV with proper contrast -->
+    <style name="FireTVAlertDialogTheme" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:background">#2d2d2d</item>
+        <item name="android:textColorPrimary">#ffffff</item>
+        <item name="android:textColorSecondary">#cccccc</item>
+        <item name="colorAccent">#ffc107</item>
+        <item name="buttonBarPositiveButtonStyle">@style/FireTVDialogButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/FireTVDialogButton</item>
+    </style>
+    
+    <style name="FireTVDialogButton" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">#ffc107</item>
+    </style>
 </resources>

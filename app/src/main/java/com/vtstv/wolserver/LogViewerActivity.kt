@@ -1,4 +1,4 @@
-package com.firetv.wol
+package com.vtstv.wolserver
 
 import android.os.Bundle
 import android.widget.Button
@@ -17,7 +17,7 @@ import java.io.InputStreamReader
  * Useful for debugging and monitoring the service status.
  * 
  * Copyright (c) 2025 Murr
- * https://github.com/vtstv/WOLFireTV
+ * https://github.com/vtstv/wolserver
  */
 class LogViewerActivity : AppCompatActivity() {
 
@@ -118,7 +118,7 @@ class LogViewerActivity : AppCompatActivity() {
             if (logs.isEmpty()) {
                 "No logs found. Make sure the service is running and generating log entries."
             } else {
-                "=== WOL Fire TV Logs (Last $lineCount entries) ===\n\n$logs"
+                "=== Simple WOL Server Logs (Last $lineCount entries) ===\n\n$logs"
             }
             
         } catch (e: Exception) {

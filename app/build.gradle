@@ -4,15 +4,15 @@ plugins {
 }
 
 android {
-    namespace 'com.firetv.wol'
-    compileSdk 34
+    namespace 'com.vtstv.wolserver'
+    compileSdk 35
 
     defaultConfig {
-        applicationId "com.firetv.wol"
-        minSdk 22  // Fire TV Stick 4K minimum
-        targetSdk 34
-        versionCode 3
-        versionName "1.0.2"
+        applicationId "com.vtstv.wolserver"
+        minSdk 22  // Android TV minimum
+        targetSdk 35
+        versionCode 5
+        versionName "1.0.5"
     }
 
     signingConfigs {

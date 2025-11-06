@@ -1,4 +1,4 @@
-package com.firetv.wol
+package com.vtstv.wolserver
 
 import android.content.Intent
 import android.os.Bundle
@@ -12,11 +12,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * Main configuration activity for the WOL Fire TV application.
+ * Main configuration activity for the Simple WOL Server application.
  * Provides a simple UI for configuring Wake-on-LAN settings and managing the background service.
  * 
  * Copyright (c) 2025 Murr
- * https://github.com/vtstv/WOLFireTV
+ * https://github.com/vtstv/wolserver
  */
 class MainActivity : AppCompatActivity() {
 
@@ -281,7 +281,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun generateNewToken() {
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(this, R.style.FireTVAlertDialogTheme)
             .setTitle("Generate New Token")
             .setMessage("This will generate a new authentication token. The old token will no longer work.")
             .setPositiveButton("Generate") { _, _ ->

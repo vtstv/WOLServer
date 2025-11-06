@@ -1,4 +1,4 @@
-package com.firetv.wol
+package com.vtstv.wolserver
 
 import android.app.*
 import android.content.Context
@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
  * Runs as a foreground service to ensure it stays active even when the app is not in foreground.
  * 
  * Copyright (c) 2025 Murr
- * https://github.com/vtstv/WOLFireTV
+ * https://github.com/vtstv/wolserver
  */
 class WolService : Service() {
 
@@ -28,9 +28,9 @@ class WolService : Service() {
         private const val NOTIFICATION_CHANNEL_ID = "wol_service_channel"
         private const val NOTIFICATION_ID = 1001
         
-        const val ACTION_START_SERVICE = "com.firetv.wol.START_SERVICE"
-        const val ACTION_STOP_SERVICE = "com.firetv.wol.STOP_SERVICE"
-        const val ACTION_RESTART_SERVICE = "com.firetv.wol.RESTART_SERVICE"
+        const val ACTION_START_SERVICE = "com.vtstv.wolserver.START_SERVICE"
+        const val ACTION_STOP_SERVICE = "com.vtstv.wolserver.STOP_SERVICE"
+        const val ACTION_RESTART_SERVICE = "com.vtstv.wolserver.RESTART_SERVICE"
     }
 
     private var httpServer: WolHttpServer? = null
@@ -160,7 +160,7 @@ class WolService : Service() {
         val serverIpAddress = getLocalIpAddress()
 
         return NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setContentTitle("WOL Fire TV")
+            .setContentTitle("Simple WOL Server")
             .setContentText("Running $serverIpAddress:${config?.httpPort ?: 8085}")
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentIntent(mainPendingIntent)

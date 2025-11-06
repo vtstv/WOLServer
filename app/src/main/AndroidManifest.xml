@@ -12,6 +12,9 @@
     <!-- Foreground service permission (Android 9+) -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     
+    <!-- Foreground service data sync permission (Android 14+) -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    
     <!-- Notification permission for Android 13+ -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
@@ -24,11 +27,11 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/Theme.Leanback"
-        android:banner="@mipmap/ic_launcher">
+        android:banner="@drawable/banner">
 
         <!-- Main Activity for configuration -->
         <activity
-            android:name=".MainActivity"
+            android:name="com.vtstv.wolserver.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Leanback"
             android:screenOrientation="landscape">
@@ -41,20 +44,20 @@
 
         <!-- Log viewer activity -->
         <activity
-            android:name=".LogViewerActivity"
+            android:name="com.vtstv.wolserver.LogViewerActivity"
             android:exported="false"
             android:theme="@style/Theme.Leanback" />
 
         <!-- Background service for HTTP server -->
         <service
-            android:name=".WolService"
+            android:name="com.vtstv.wolserver.WolService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
 
         <!-- Boot receiver for auto-start -->
         <receiver
-            android:name=".BootReceiver"
+            android:name="com.vtstv.wolserver.BootReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter android:priority="1000">

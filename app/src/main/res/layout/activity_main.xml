@@ -14,7 +14,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="🔥 WOL Fire TV Configuration"
+            android:text="🔥 Simple WOL Server Configuration"
             android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="#ffffff"
@@ -353,7 +353,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="💡 Instructions:\n1. Set web password and API token\n2. Enter your PC's MAC address\n3. Save configuration and start service\n4. Access web interface at http://SERVER_IP:8085\n\nWOL Fire TV v1.0.0\n© 2025 Murr | github.com/vtstv/WOLFireTV"
+            android:text="💡 Instructions:\n1. Set web password and API token\n2. Enter your PC's MAC address\n3. Save configuration and start service\n4. Access web interface at http://SERVER_IP:8085\n\nSimple WOL Server v1.0.5\n© 2025 Murr | github.com/vtstv/WOLServer"
             android:textColor="#cccccc"
             android:textSize="12sp"
             android:layout_marginTop="24dp"
