@@ -1,0 +1,25 @@
+{
+  "title": "Simple WOL Server",
+  "shortDescription": "Leistungsstarker Wake-on-LAN Daemon und Geräte-Manager für Fire TV und Android TV.",
+  "longDescription": "Simple WOL Server ist ein leichtgewichtiger, leistungsstarker Wake-on-LAN-Daemon und Multi-Geräte-Manager für Amazon Fire TV, Android TV und Smart Displays.\n\nAls unterbrechungsfreier Hintergrunddienst hostet die App eine integrierte REST-API und ein modernes Web-Dashboard. Wecken Sie PCs, Heimserver, NAS-Systeme und Konsolen direkt per TV-Fernbedienung, Webbrowser oder über Hausautomationssysteme (Home Assistant, Apple Shortcuts, Node-RED).\n\nHauptfunktionen:\n- TV-optimierte D-Pad-Steuerung: Übersichtliche 10-Fuß-Oberfläche mit Fokus-Indikatoren und augenschonendem Dark Mode.\n- Multi-Geräte-Verwaltung: Konfigurieren Sie beliebig viele Zielgeräte mit individuellen MAC-Adressen, Broadcast-IPs und Ports.\n- Integriertes Web-Dashboard: Vollständige Fernsteuerung über jeden Browser im lokalen Netzwerk.\n- REST-API: Sichere Schnittstellen für nahtlose Integration in Smart-Home-Umgebungen.\n- LAN-Netzwerkscanner: Automatische Erkennung aktiver Computer und Netzwerkgeräte.\n- Live-Statusüberwachung: Kontinuierliche Latenz- und Online-Prüfung.\n- Zeitgesteuertes Wecken: Flexible Zeitpläne nach Uhrzeit und Wochentag.\n- Mehrsprachig: Englisch, Deutsch und Russisch.",
+  "featureBullets": [
+    "PCs, Server, NAS und Konsolen per Magic Packet im Netzwerk aufwecken",
+    "Integrierte REST-API für Home Assistant, Apple Kurzbefehle und Skripte",
+    "Modernes Web-Dashboard für Smartphone und PC im lokalen Netzwerk",
+    "Automatischer LAN-Gerätescanner und Live-Statusüberwachung",
+    "Zeitplaner für automatisches Wecken nach Uhrzeit und Wochentag",
+    "Optimiert für Fire TV D-Pad-Fernbedienungen und dauerhaften 24/7-Betrieb",
+    "Vollständige Lokalisierung auf Englisch, Deutsch und Russisch"
+  ],
+  "keywords": [
+    "Wake on LAN",
+    "WOL",
+    "Server",
+    "Fire TV",
+    "Home Assistant",
+    "Netzwerk",
+    "Magic Packet",
+    "Smart Home",
+    "Fernbedienung"
+  ]
+}

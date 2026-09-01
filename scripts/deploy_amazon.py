@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
 Simple WOL Server - Amazon Appstore Automated Deployment Script
-Allows 1-command build, upload, and publication to Amazon Developer Console without CI/CD.
+Allows 1-command build, upload, metadata/listings sync, and publication to Amazon Developer Console without CI/CD.
 
 Usage:
-    python scripts/deploy_amazon.py [--build] [--publish] [--apk path/to/app-release.apk]
+    python scripts/deploy_amazon.py [--build] [--sync-metadata] [--publish] [--apk path/to/app-release.apk]
 
 Prerequisites:
     Create 'secrets/amazon_credentials.json' with:
@@ -25,6 +25,7 @@ import urllib.parse
 
 CREDENTIALS_FILE = os.path.join(os.path.dirname(__file__), "..", "secrets", "amazon_credentials.json")
 DEFAULT_APK_PATH = os.path.join(os.path.dirname(__file__), "..", "app", "build", "outputs", "apk", "release", "app-release.apk")
+METADATA_DIR = os.path.join(os.path.dirname(__file__), "..", "store_metadata")
 
 LWA_TOKEN_URL = "https://api.amazon.com/auth/o2/token"
 AMAZON_API_BASE = "https://developer.amazon.com/api-appstore/v1"
@@ -164,6 +165,51 @@ def upload_apk(app_id, edit_id, apk_path, token):
         sys.exit(1)
 
 
+def sync_store_metadata(app_id, edit_id, token):
+    """
+    Syncs multilingual descriptions, titles, feature bullets, and keywords from store_metadata/
+    """
+    print("[*] Synchronizing store listings & localized descriptions...")
+    if not os.path.exists(METADATA_DIR):
+        print(f"[!] Metadata directory not found at: {METADATA_DIR}")
+        return
+
+    locales = [
+        ("en-US", "store_metadata/en-US.json"),
+        ("de-DE", "store_metadata/de-DE.json"),
+        ("ru-RU", "store_metadata/ru-RU.json")
+    ]
+
+    for locale_code, rel_path in locales:
+        meta_file = os.path.join(METADATA_DIR, f"{locale_code}.json")
+        if not os.path.exists(meta_file):
+            continue
+
+        try:
+            with open(meta_file, "r", encoding="utf-8") as f:
+                meta_json = json.load(f)
+
+            url = f"{AMAZON_API_BASE}/applications/{app_id}/edits/{edit_id}/listings/{locale_code}"
+            data_bytes = json.dumps(meta_json, ensure_ascii=False).encode("utf-8")
+
+            req = urllib.request.Request(
+                url,
+                data=data_bytes,
+                headers={
+                    "Authorization": f"Bearer {token}",
+                    "Content-Type": "application/json; charset=utf-8"
+                },
+                method="PUT"
+            )
+
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                print(f"[✓] Store listing updated for {locale_code} (Title: {meta_json.get('title')})")
+        except urllib.error.HTTPError as e:
+            print(f"[!] Warning: Could not update {locale_code} listing ({e.code}): {e.read().decode('utf-8', 'ignore')}")
+        except Exception as e:
+            print(f"[!] Error updating {locale_code}: {e}")
+
+
 def publish_edit(app_id, edit_id, token):
     print("[*] Submitting edit for Amazon Appstore review & publishing...")
     url = f"{AMAZON_API_BASE}/applications/{app_id}/edits/{edit_id}/publish"
@@ -188,6 +234,7 @@ def publish_edit(app_id, edit_id, token):
 def main():
     parser = argparse.ArgumentParser(description="Upload & Deploy Simple WOL Server to Amazon Developer Console")
     parser.add_argument("--build", action="store_true", help="Build release APK before uploading")
+    parser.add_argument("--sync-metadata", action="store_true", default=True, help="Update multilingual store listings")
     parser.add_argument("--publish", action="store_true", help="Automatically submit app for review/publication after upload")
     parser.add_argument("--apk", type=str, default=DEFAULT_APK_PATH, help="Path to APK file to upload")
     args = parser.parse_args()
@@ -201,10 +248,13 @@ def main():
     edit_id = get_or_create_edit(app_id, token)
     upload_apk(app_id, edit_id, args.apk, token)
 
+    if args.sync_metadata:
+        sync_store_metadata(app_id, edit_id, token)
+
     if args.publish:
         publish_edit(app_id, edit_id, token)
     else:
-        print("\n[i] Done! APK uploaded to draft edit.")
+        print("\n[i] Done! APK and store listings uploaded to draft edit.")
         print("    Pass '--publish' to automatically submit for review, or submit manually via developer.amazon.com.")
 
 
