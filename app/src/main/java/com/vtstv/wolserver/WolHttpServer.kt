@@ -42,6 +42,8 @@ class WolHttpServer(
 
     private val gson = Gson()
     private val scope = CoroutineScope(Dispatchers.IO)
+    private val currentConfig: WolConfig
+        get() = configManager.loadConfig()
 
     override fun serve(session: IHTTPSession): Response {
         val uri = session.uri
@@ -56,7 +58,7 @@ class WolHttpServer(
         }
 
         // IP allowlist check
-        if (config.ipAllowlist.isNotEmpty() && !isIpAllowed(clientIp)) {
+        if (currentConfig.ipAllowlist.isNotEmpty() && !isIpAllowed(clientIp)) {
             Log.w(TAG, "IP $clientIp rejected by allowlist")
             return createCorsResponse(Response.Status.FORBIDDEN, MIME_PLAINTEXT, "Access denied")
         }
@@ -127,26 +129,26 @@ class WolHttpServer(
     }
 
     private fun isIpAllowed(ip: String): Boolean {
-        if (config.ipAllowlist.isEmpty()) return true
+        if (currentConfig.ipAllowlist.isEmpty()) return true
         val normalized = ip.trim()
-        if (config.ipAllowlist.contains(normalized)) return true
+        if (currentConfig.ipAllowlist.contains(normalized)) return true
         if (normalized == "127.0.0.1" || normalized == "::1" || normalized == "localhost") return true
         return false
     }
 
     private fun isAuthenticated(session: IHTTPSession): Boolean {
-        if (!config.requireAuthentication) return true
+        if (!currentConfig.requireAuthentication) return true
 
         val authHeader = session.headers["authorization"] ?: session.headers["Authorization"]
         if (!authHeader.isNullOrBlank()) {
             if (authHeader.startsWith("Bearer ", ignoreCase = true)) {
                 val token = authHeader.substring(7).trim()
-                if (token == config.authToken) return true
+                if (token == currentConfig.authToken) return true
             }
         }
 
         val tokenParam = session.parms["token"]
-        if (!tokenParam.isNullOrBlank() && tokenParam == config.authToken) {
+        if (!tokenParam.isNullOrBlank() && tokenParam == currentConfig.authToken) {
             return true
         }
 
@@ -175,11 +177,11 @@ class WolHttpServer(
             val loginRequest = gson.fromJson(postData, Map::class.java)
             val password = loginRequest["password"]?.toString() ?: ""
 
-            if (password == config.webPassword) {
+            if (password == currentConfig.webPassword) {
                 val response = mapOf(
                     "success" to true,
                     "message" to "Login successful",
-                    "authToken" to config.authToken
+                    "authToken" to currentConfig.authToken
                 )
                 newFixedLengthResponse(Response.Status.OK, "application/json", gson.toJson(response))
             } else {
@@ -441,8 +443,8 @@ class WolHttpServer(
             devices.isNotEmpty() -> {
                 devices
             }
-            config.targetMacAddress.isNotBlank() -> {
-                listOf(WolDevice(name = "Legacy Target", macAddress = config.targetMacAddress))
+            currentConfig.targetMacAddress.isNotBlank() -> {
+                listOf(WolDevice(name = "Legacy Target", macAddress = currentConfig.targetMacAddress))
             }
             else -> {
                 return newFixedLengthResponse(Response.Status.BAD_REQUEST, "application/json",
@@ -1165,93 +1167,96 @@ class WolHttpServer(
                 <!-- Device cards rendered via JS -->
             </div>
 
-            <!-- Settings Section -->
-            <div id="settingsSection" class="settings-card hidden">
-                <div class="modal-header" style="margin-bottom: 20px;">
-                    <h3 data-i18n="serverSettingsTitle">⚙️ Server &amp; Security Settings</h3>
+        </div>
+    </div>
+
+    <!-- Server Settings Modal -->
+    <div id="settingsModal" class="modal-overlay">
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <h3 data-i18n="serverSettingsTitle">⚙️ Server &amp; Security Settings</h3>
+                <button onclick="closeSettingsModal()" class="icon-btn" style="border: none;">✖</button>
+            </div>
+
+            <div class="form-grid">
+                <!-- Language Selection in Settings -->
+                <div class="form-group">
+                    <label data-i18n="languageSetting">🌐 Interface Language / Sprache / Язык</label>
+                    <select id="cfgLanguage" onchange="setLanguage(this.value)" class="form-control" style="cursor: pointer;">
+                        <option value="en">English</option>
+                        <option value="de">Deutsch</option>
+                        <option value="ru">Русский</option>
+                    </select>
                 </div>
 
-                <div class="form-grid">
-                    <!-- Language Selection in Settings -->
-                    <div class="form-group">
-                        <label data-i18n="languageSetting">🌐 Interface Language / Sprache / Язык</label>
-                        <select id="cfgLanguage" onchange="setLanguage(this.value)" class="form-control" style="cursor: pointer;">
-                            <option value="en">English</option>
-                            <option value="de">Deutsch</option>
-                            <option value="ru">Русский</option>
-                        </select>
-                    </div>
+                <!-- Web Password -->
+                <div class="form-group">
+                    <label data-i18n="webPassword">Web Dashboard Password</label>
+                    <input type="password" id="cfgWebPassword" class="form-control">
+                </div>
 
-                    <!-- Web Password -->
-                    <div class="form-group">
-                        <label data-i18n="webPassword">Web Dashboard Password</label>
-                        <input type="password" id="cfgWebPassword" class="form-control">
-                    </div>
-
-                    <!-- API Authentication Token (Full-Width High-UX Card) -->
-                    <div class="form-group form-group-full">
-                        <label data-i18n="apiToken">API Authentication Token (Bearer)</label>
-                        <div class="token-card">
-                            <div class="token-input-row">
-                                <input type="text" id="cfgAuthToken" class="token-display" placeholder="Click generate for new token">
-                                <div class="token-actions">
-                                    <button type="button" onclick="copyToken()" class="btn-token-action" data-i18n="copyToken">📋 Copy</button>
-                                    <button type="button" onclick="generateToken()" class="btn-token-action" data-i18n="generateToken">🎲 Generate</button>
-                                </div>
-                            </div>
-                            <span class="field-hint" data-i18n="tokenHint">Bearer token for Home Assistant, Apple Shortcuts, and external REST API integrations (/wake, /api/devices).</span>
-                        </div>
-                    </div>
-
-                    <!-- HTTP Port -->
-                    <div class="form-group">
-                        <label data-i18n="httpPort">HTTP Server Port</label>
-                        <input type="number" id="cfgHttpPort" class="form-control" value="8085">
-                    </div>
-
-                    <!-- Default Broadcast IP -->
-                    <div class="form-group">
-                        <label data-i18n="broadcastIp">Default Broadcast IP</label>
-                        <input type="text" id="cfgBroadcast" class="form-control" value="255.255.255.255">
-                    </div>
-
-                    <!-- IP Allowlist -->
-                    <div class="form-group form-group-full">
-                        <label data-i18n="ipAllowlist">IP Allowlist (Comma separated, empty for all)</label>
-                        <input type="text" id="cfgAllowlist" class="form-control" placeholder="192.168.1.100, 192.168.1.50">
-                    </div>
-
-                    <!-- Checkboxes -->
-                    <div class="form-group form-group-full">
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
-                            <div class="checkbox-group">
-                                <input type="checkbox" id="cfgRequireAuth">
-                                <label for="cfgRequireAuth" data-i18n="requireAuth">Require Authentication Token for /wake endpoint</label>
-                            </div>
-                            <div class="checkbox-group">
-                                <input type="checkbox" id="cfgAutoStart">
-                                <label for="cfgAutoStart" data-i18n="autoStart">Auto-start Server on Device Boot</label>
+                <!-- API Authentication Token (Full-Width High-UX Card) -->
+                <div class="form-group form-group-full">
+                    <label data-i18n="apiToken">API Authentication Token (Bearer)</label>
+                    <div class="token-card">
+                        <div class="token-input-row">
+                            <input type="text" id="cfgAuthToken" class="token-display" placeholder="Click generate for new token">
+                            <div class="token-actions">
+                                <button type="button" onclick="copyToken()" class="btn-token-action" data-i18n="copyToken">📋 Copy</button>
+                                <button type="button" onclick="generateToken()" class="btn-token-action" data-i18n="generateToken">🎲 Generate</button>
                             </div>
                         </div>
+                        <span class="field-hint" data-i18n="tokenHint">Bearer token for Home Assistant, Apple Shortcuts, and external REST API integrations (/wake, /api/devices).</span>
                     </div>
+                </div>
 
-                    <!-- Backup & Restore Section -->
-                    <div class="form-group form-group-full" style="border-top: 1px solid var(--border-glass); padding-top: 16px; margin-top: 8px;">
-                        <label data-i18n="backupTitle">💾 Backup &amp; Restore Configuration</label>
-                        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px;">
-                            <button type="button" onclick="downloadBackup()" class="btn btn-secondary" data-i18n="downloadBackup">💾 Download JSON Backup</button>
-                            <button type="button" onclick="triggerRestoreUpload()" class="btn btn-secondary" data-i18n="restoreBackup">📥 Restore from JSON File</button>
-                            <input type="file" id="restoreFileInput" accept=".json" style="display: none;" onchange="handleFileRestore(this)">
+                <!-- HTTP Port -->
+                <div class="form-group">
+                    <label data-i18n="httpPort">HTTP Server Port</label>
+                    <input type="number" id="cfgHttpPort" class="form-control" value="8085">
+                </div>
+
+                <!-- Default Broadcast IP -->
+                <div class="form-group">
+                    <label data-i18n="broadcastIp">Default Broadcast IP</label>
+                    <input type="text" id="cfgBroadcast" class="form-control" value="255.255.255.255">
+                </div>
+
+                <!-- IP Allowlist -->
+                <div class="form-group form-group-full">
+                    <label data-i18n="ipAllowlist">IP Allowlist (Comma separated, empty for all)</label>
+                    <input type="text" id="cfgAllowlist" class="form-control" placeholder="192.168.1.100, 192.168.1.50">
+                </div>
+
+                <!-- Checkboxes -->
+                <div class="form-group form-group-full">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="cfgRequireAuth">
+                            <label for="cfgRequireAuth" data-i18n="requireAuth">Require Authentication Token for /wake endpoint</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="cfgAutoStart">
+                            <label for="cfgAutoStart" data-i18n="autoStart">Auto-start Server on Device Boot</label>
                         </div>
                     </div>
                 </div>
 
-                <div style="display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 10px;">
-                    <button onclick="toggleSettings()" class="btn btn-secondary" data-i18n="cancel">Cancel</button>
-                    <button onclick="saveServerConfig()" class="btn btn-primary" data-i18n="saveSettings">Save &amp; Apply</button>
+                <!-- Backup & Restore Section -->
+                <div class="form-group form-group-full" style="border-top: 1px solid var(--border-glass); padding-top: 16px; margin-top: 8px;">
+                    <label data-i18n="backupTitle">💾 Backup &amp; Restore Configuration</label>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px;">
+                        <button type="button" onclick="downloadBackup()" class="btn btn-secondary" data-i18n="downloadBackup">💾 Download JSON Backup</button>
+                        <button type="button" onclick="triggerRestoreUpload()" class="btn btn-secondary" data-i18n="restoreBackup">📥 Restore from JSON File</button>
+                        <input type="file" id="restoreFileInput" accept=".json" style="display: none;" onchange="handleFileRestore(this)">
+                    </div>
                 </div>
             </div>
 
+            <div class="modal-footer">
+                <button onclick="closeSettingsModal()" class="btn btn-secondary" data-i18n="cancel">Cancel</button>
+                <button onclick="saveServerConfig()" class="btn btn-primary" data-i18n="saveSettings">Save &amp; Apply</button>
+            </div>
         </div>
     </div>
 
@@ -2517,8 +2522,16 @@ print("WoL Status:", response.json())
         }
 
         function toggleSettings() {
-            const sec = document.getElementById('settingsSection');
-            sec.classList.toggle('hidden');
+            openSettingsModal();
+        }
+
+        function openSettingsModal() {
+            loadConfigData();
+            document.getElementById('settingsModal').classList.add('active');
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').classList.remove('active');
         }
 
         function openAboutModal() {
@@ -2573,6 +2586,7 @@ print("WoL Status:", response.json())
             .then(res => {
                 if (res.success) {
                     showToast(t('toastSettingsSuccess'));
+                    closeSettingsModal();
                 } else {
                     showToast(res.message, 'error');
                 }

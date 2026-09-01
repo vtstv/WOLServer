@@ -82,7 +82,13 @@ class NetworkScanner(private val wakeOnLan: WakeOnLan) {
         val discoveredList = mutableListOf<DiscoveredDevice>()
 
         for (ip in allDiscoveredIps) {
-            val rawMac = arpMap[ip] ?: ""
+            var rawMac = arpMap[ip] ?: ""
+            
+            // If MAC not in local ARP cache, probe via UPnP / TR-064 and NetBIOS
+            if (rawMac.isBlank()) {
+                rawMac = resolveMacFromUpnp(ip) ?: resolveMacFromNetbios(ip) ?: ""
+            }
+
             val formattedMac = if (wakeOnLan.isValidMacAddress(rawMac) && rawMac != "00:00:00:00:00:00") {
                 wakeOnLan.formatMacAddress(rawMac)
             } else {
@@ -145,6 +151,93 @@ class NetworkScanner(private val wakeOnLan: WakeOnLan) {
     }
 
     /**
+     * Resolves MAC address via UPnP / TR-064 device description XML on common ports.
+     */
+    private fun resolveMacFromUpnp(ip: String): String? {
+        val targets = listOf(
+            "49000/tr64desc.xml",
+            "49000/igddesc.xml",
+            "80/tr64desc.xml",
+            "80/igddesc.xml",
+            "8080/description.xml",
+            "49152/description.xml",
+            "49153/description.xml",
+            "8080/rootDesc.xml"
+        )
+
+        for (target in targets) {
+            try {
+                val url = java.net.URL("http://$ip:$target")
+                val conn = url.openConnection() as java.net.HttpURLConnection
+                conn.connectTimeout = 450
+                conn.readTimeout = 500
+                conn.requestMethod = "GET"
+                conn.setRequestProperty("User-Agent", "WOLServer/2.0")
+                if (conn.responseCode == 200) {
+                    val body = conn.inputStream.bufferedReader().use { it.readText() }
+                    
+                    // Search for <serialNumber>AA:BB:CC:DD:EE:FF</serialNumber> or <macAddress>...</macAddress>
+                    val serialRegex = Regex("<(?:serialNumber|macAddress|mac)>([^<]+)</(?:serialNumber|macAddress|mac)>", RegexOption.IGNORE_CASE)
+                    val serialMatch = serialRegex.find(body)?.groupValues?.get(1)?.trim()
+                    if (serialMatch != null && wakeOnLan.isValidMacAddress(serialMatch)) {
+                        return serialMatch
+                    }
+
+                    // Search for UDN uuid:....-....-MAC
+                    val udnRegex = Regex("uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-([0-9a-fA-F]{12})", RegexOption.IGNORE_CASE)
+                    val udnMatch = udnRegex.find(body)?.groupValues?.get(1)?.trim()
+                    if (udnMatch != null && wakeOnLan.isValidMacAddress(udnMatch)) {
+                        return udnMatch
+                    }
+                }
+                conn.disconnect()
+            } catch (ignored: Exception) {}
+        }
+        return null
+    }
+
+    /**
+     * Resolves MAC address via NetBIOS Node Status query (UDP port 137).
+     * Windows PCs and Samba servers return their hardware MAC in node status replies.
+     */
+    private fun resolveMacFromNetbios(ip: String): String? {
+        try {
+            DatagramSocket().use { socket ->
+                socket.soTimeout = 350
+                // NetBIOS Wildcard (*) Node Status Request (RFC 1002)
+                val query = byteArrayOf(
+                    0xa2.toByte(), 0x48.toByte(), 0x00, 0x00, 0x00, 0x01, 0x00, 0x00,
+                    0x00, 0x00, 0x00, 0x00, 0x20, 0x43, 0x4b, 0x41, 0x41, 0x41,
+                    0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41,
+                    0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41,
+                    0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x00, 0x00, 0x21,
+                    0x00, 0x01
+                )
+                val address = InetAddress.getByName(ip)
+                val packet = DatagramPacket(query, query.size, address, 137)
+                socket.send(packet)
+
+                val buf = ByteArray(1024)
+                val recvPacket = DatagramPacket(buf, buf.size)
+                socket.receive(recvPacket)
+
+                if (recvPacket.length >= 62) {
+                    val numNames = buf[56].toInt() and 0xFF
+                    val macOffset = 57 + numNames * 18
+                    if (recvPacket.length >= macOffset + 6) {
+                        val macBytes = buf.copyOfRange(macOffset, macOffset + 6)
+                        val macStr = macBytes.joinToString(":") { "%02X".format(it) }
+                        if (wakeOnLan.isValidMacAddress(macStr) && macStr != "00:00:00:00:00:00") {
+                            return macStr
+                        }
+                    }
+                }
+            }
+        } catch (ignored: Exception) {}
+        return null
+    }
+
+    /**
      * Collects ARP table data from multiple sources:
      * - /proc/net/arp FileReader
      * - 'ip neigh' process execution
@@ -172,47 +265,29 @@ class NetworkScanner(private val wakeOnLan: WakeOnLan) {
             }
         } catch (ignored: Exception) {}
 
-        // Source 2: 'ip neigh' command
+        // Source 2: '/system/bin/ip neigh' or 'ip neigh' command
         if (map.isEmpty()) {
-            try {
-                val process = Runtime.getRuntime().exec(arrayOf("ip", "neigh"))
-                BufferedReader(InputStreamReader(process.inputStream)).use { reader ->
-                    var line: String?
-                    while (reader.readLine().also { line = it } != null) {
-                        val tokens = line!!.trim().split(Regex("\\s+"))
-                        val lladdrIdx = tokens.indexOf("lladdr")
-                        if (lladdrIdx in 0 until tokens.size - 1) {
-                            val ip = tokens[0]
-                            val mac = tokens[lladdrIdx + 1]
-                            if (wakeOnLan.isValidMacAddress(mac) && mac != "00:00:00:00:00:00") {
-                                map[ip] = mac
+            val cmdList = listOf(arrayOf("/system/bin/ip", "neigh"), arrayOf("ip", "neigh"))
+            for (cmd in cmdList) {
+                try {
+                    val process = Runtime.getRuntime().exec(cmd)
+                    BufferedReader(InputStreamReader(process.inputStream)).use { reader ->
+                        var line: String?
+                        while (reader.readLine().also { line = it } != null) {
+                            val tokens = line!!.trim().split(Regex("\\s+"))
+                            val lladdrIdx = tokens.indexOf("lladdr")
+                            if (lladdrIdx in 0 until tokens.size - 1) {
+                                val ip = tokens[0]
+                                val mac = tokens[lladdrIdx + 1]
+                                if (wakeOnLan.isValidMacAddress(mac) && mac != "00:00:00:00:00:00") {
+                                    map[ip] = mac
+                                }
                             }
                         }
                     }
-                }
-            } catch (ignored: Exception) {}
-        }
-
-        // Source 3: 'cat /proc/net/arp' command
-        if (map.isEmpty()) {
-            try {
-                val process = Runtime.getRuntime().exec(arrayOf("cat", "/proc/net/arp"))
-                BufferedReader(InputStreamReader(process.inputStream)).use { reader ->
-                    reader.readLine() // skip header
-                    var line: String?
-                    while (reader.readLine().also { line = it } != null) {
-                        val tokens = line!!.trim().split(Regex("\\s+"))
-                        if (tokens.size >= 4) {
-                            val ip = tokens[0]
-                            val flags = tokens[2]
-                            val mac = tokens[3]
-                            if (flags != "0x0" && mac != "00:00:00:00:00:00" && wakeOnLan.isValidMacAddress(mac)) {
-                                map[ip] = mac
-                            }
-                        }
-                    }
-                }
-            } catch (ignored: Exception) {}
+                    if (map.isNotEmpty()) break
+                } catch (ignored: Exception) {}
+            }
         }
 
         return map
