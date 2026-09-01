@@ -32,23 +32,37 @@ AMAZON_API_BASE = "https://developer.amazon.com/api-appstore/v1"
 
 
 def load_credentials():
+    import re
     client_id = os.environ.get("AMAZON_APPSTORE_CLIENT_ID")
     client_secret = os.environ.get("AMAZON_APPSTORE_CLIENT_SECRET")
     app_id = os.environ.get("AMAZON_APPSTORE_APP_ID")
 
     if os.path.exists(CREDENTIALS_FILE):
         try:
-            with open(CREDENTIALS_FILE, "r", encoding="utf-8") as f:
-                data = json.load(f)
+            with open(CREDENTIALS_FILE, "r", encoding="utf-8-sig") as f:
+                content = f.read()
+            
+            # Try strict=False JSON parsing first
+            try:
+                data = json.loads(content, strict=False)
                 client_id = client_id or data.get("client_id")
                 client_secret = client_secret or data.get("client_secret")
                 app_id = app_id or data.get("app_id")
+            except Exception:
+                # Robust regex fallback parser for dirty JSON / unescaped newlines
+                def extract_val(key):
+                    m = re.search(rf'"{key}"\s*:\s*"([^"]+)"', content, re.IGNORECASE)
+                    return m.group(1).strip() if m else None
+
+                client_id = client_id or extract_val("client_id")
+                client_secret = client_secret or extract_val("client_secret")
+                app_id = app_id or extract_val("app_id")
         except Exception as e:
             print(f"[!] Warning: Could not read {CREDENTIALS_FILE}: {e}")
 
     if not client_id or not client_secret or not app_id:
         print("[X] Error: Missing Amazon API credentials.")
-        print(f"    Please create '{CREDENTIALS_FILE}' or set environment variables:")
+        print(f"    Please check '{CREDENTIALS_FILE}' or set environment variables:")
         print("    AMAZON_APPSTORE_CLIENT_ID, AMAZON_APPSTORE_CLIENT_SECRET, AMAZON_APPSTORE_APP_ID")
         sys.exit(1)
 
