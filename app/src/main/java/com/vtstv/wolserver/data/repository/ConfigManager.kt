@@ -1,111 +1,24 @@
-package com.vtstv.wolserver
+package com.vtstv.wolserver.data.repository
 
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import java.net.InetAddress
+import com.vtstv.wolserver.data.model.WolBackup
+import com.vtstv.wolserver.data.model.WolConfig
+import com.vtstv.wolserver.data.model.WolDevice
+import com.vtstv.wolserver.data.model.WolSchedule
 import java.util.UUID
 
 /**
- * Configuration manager and data models for the Simple WOL Server application.
+ * Configuration repository for the Simple WOL Server application.
  * Handles persistent storage of multi-device configuration, auto-wake schedules,
  * and backup/restore JSON serialization using SharedPreferences.
- * 
- * Copyright (c) 2025-2026 Murr
- * https://github.com/vtstv/wolserver
- */
-
-/**
- * Model representing an individual Wake-on-LAN target device.
- */
-data class WolDevice(
-    var id: String = UUID.randomUUID().toString(),
-    var name: String = "My Computer",
-    var macAddress: String = "",
-    var broadcastAddress: String = "255.255.255.255",
-    var port: Int = 9,
-    var ipAddress: String = "", // Optional IP address for ping / status checks
-    var pingPort: Int = 0,     // 0 = ICMP/auto, or specific port (3389 RDP, 22 SSH, 80, 445)
-    var iconType: String = "desktop", // "desktop", "server", "laptop", "console", "tv"
-    var lastWokenTimestamp: Long = 0
-) {
-    fun isValidMacAddress(): Boolean {
-        val clean = macAddress.replace(":", "").replace("-", "").replace(".", "").trim()
-        return clean.length == 12 && clean.matches(Regex("^[0-9A-Fa-f]{12}$"))
-    }
-
-    fun isValidPort(): Boolean {
-        return port in 1..65535
-    }
-}
-
-/**
- * Model representing an automated Wake-on-LAN schedule / timer.
- */
-data class WolSchedule(
-    var id: String = UUID.randomUUID().toString(),
-    var deviceId: String = "all", // "all" or specific device ID
-    var deviceName: String = "All Devices",
-    var name: String = "Auto Wake",
-    var daysOfWeek: MutableList<Int> = mutableListOf(1, 2, 3, 4, 5), // 1=Mon, 2=Tue, ..., 7=Sun
-    var hour: Int = 8,     // 0..23
-    var minute: Int = 30,  // 0..59
-    var enabled: Boolean = true,
-    var lastRunTimestamp: Long = 0
-)
-
-/**
- * Model for full configuration export and import backup.
- */
-data class WolBackup(
-    val app: String = "Simple WOL Server",
-    val version: String = "2.0.0",
-    val timestamp: Long = System.currentTimeMillis(),
-    val config: WolConfig,
-    val devices: List<WolDevice>,
-    val schedules: List<WolSchedule>
-)
-
-/**
- * Global configuration data class for Simple WOL Server.
- */
-data class WolConfig(
-    var authToken: String = "default_token_change_me",
-    var webPassword: String = "admin123",
-    var devices: MutableList<WolDevice> = mutableListOf(),
-    var broadcastAddress: String = "255.255.255.255",
-    var wolPort: Int = 9,
-    var httpPort: Int = 8085,
-    var ipAllowlist: List<String> = emptyList(),
-    var httpsEnabled: Boolean = false,
-    var autoStartEnabled: Boolean = true,
-    var requireAuthentication: Boolean = true,
-    // Legacy single-device compatibility
-    var targetMacAddress: String = ""
-) {
-    fun isValidPort(port: Int): Boolean {
-        return port in 1..65535
-    }
-    
-    fun isValidIpAddress(ip: String): Boolean {
-        return try {
-            InetAddress.getByName(ip)
-            true
-        } catch (e: Exception) {
-            false
-        }
-    }
-}
-
-/**
- * Configuration manager for the Simple WOL Server application.
- * Handles persistent storage of configuration parameters using SharedPreferences.
  */
 class ConfigManager(private val context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     private val gson = Gson()
-    
+
     companion object {
         private const val PREFS_NAME = "wol_config"
         private const val KEY_AUTH_TOKEN = "auth_token"
@@ -121,11 +34,11 @@ class ConfigManager(private val context: Context) {
         private const val KEY_AUTO_START = "auto_start"
         private const val KEY_REQUIRE_AUTH = "require_auth"
     }
-    
+
     fun loadConfig(): WolConfig {
         val legacyMac = prefs.getString(KEY_MAC_ADDRESS, "") ?: ""
         val devices = loadDevices()
-        
+
         // Auto-migration: if no devices in list but legacy MAC exists, create first device
         if (devices.isEmpty() && legacyMac.isNotBlank()) {
             val defaultDevice = WolDevice(
@@ -154,7 +67,7 @@ class ConfigManager(private val context: Context) {
             targetMacAddress = legacyMac
         )
     }
-    
+
     fun saveConfig(config: WolConfig) {
         prefs.edit().apply {
             putString(KEY_AUTH_TOKEN, config.authToken)
@@ -167,7 +80,6 @@ class ConfigManager(private val context: Context) {
             putBoolean(KEY_HTTPS_ENABLED, config.httpsEnabled)
             putBoolean(KEY_AUTO_START, config.autoStartEnabled)
             putBoolean(KEY_REQUIRE_AUTH, config.requireAuthentication)
-            // Keep first device as legacy MAC if available
             val firstMac = config.devices.firstOrNull()?.macAddress ?: config.targetMacAddress
             putString(KEY_MAC_ADDRESS, firstMac)
             apply()
@@ -281,7 +193,7 @@ class ConfigManager(private val context: Context) {
             false
         }
     }
-    
+
     private fun loadIpAllowlist(): List<String> {
         val json = prefs.getString(KEY_IP_ALLOWLIST, "[]") ?: "[]"
         return try {
@@ -291,7 +203,7 @@ class ConfigManager(private val context: Context) {
             emptyList()
         }
     }
-    
+
     fun generateRandomToken(): String {
         val charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
         return (1..32)

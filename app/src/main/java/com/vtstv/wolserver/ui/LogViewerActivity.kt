@@ -1,10 +1,14 @@
-package com.vtstv.wolserver
+package com.vtstv.wolserver.ui
 
+import android.content.Context
+import android.graphics.Typeface
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.vtstv.wolserver.R
+import com.vtstv.wolserver.ui.util.LocaleHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -13,8 +17,7 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 
 /**
- * Simple log viewer activity that displays recent logcat entries for the WOL application.
- * Useful for debugging and monitoring the service status.
+ * TV Logcat viewer activity that displays recent diagnostic and runtime logs.
  */
 class LogViewerActivity : AppCompatActivity() {
 
@@ -24,14 +27,14 @@ class LogViewerActivity : AppCompatActivity() {
     private lateinit var buttonClear: Button
     private lateinit var buttonBack: Button
 
-    override fun attachBaseContext(newBase: android.content.Context) {
+    override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LocaleHelper.onAttach(newBase))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_log_viewer)
-        
+
         initializeViews()
         setupListeners()
         loadLogs()
@@ -44,8 +47,8 @@ class LogViewerActivity : AppCompatActivity() {
         buttonRefresh = findViewById(R.id.buttonRefresh)
         buttonClear = findViewById(R.id.buttonClear)
         buttonBack = findViewById(R.id.buttonBack)
-        
-        textLogs.typeface = android.graphics.Typeface.MONOSPACE
+
+        textLogs.typeface = Typeface.MONOSPACE
     }
 
     private fun setupListeners() {
@@ -71,7 +74,7 @@ class LogViewerActivity : AppCompatActivity() {
         isLoadingLogs = true
         CoroutineScope(Dispatchers.Main).launch {
             buttonRefresh.text = "⏳ ..."
-            
+
             try {
                 val logs = withContext(Dispatchers.IO) {
                     getLogcatOutput()
@@ -107,23 +110,23 @@ class LogViewerActivity : AppCompatActivity() {
                 "-v", "time",
                 "-s", "WolService:*,WolHttpServer:*,WakeOnLan:*,MainActivity:*,BootReceiver:*,System.err:*"
             )
-            
+
             val process = Runtime.getRuntime().exec(command)
             val reader = BufferedReader(InputStreamReader(process.inputStream))
-            
+
             val logs = StringBuilder()
             var line: String?
             var lineCount = 0
             val maxLines = 500
-            
+
             while (reader.readLine().also { line = it } != null && lineCount < maxLines) {
                 logs.appendLine(line)
                 lineCount++
             }
-            
+
             reader.close()
             process.destroy()
-            
+
             if (logs.isEmpty()) {
                 "No logs recorded yet. Start the service or send a Wake packet to view logs."
             } else {

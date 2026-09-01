@@ -1,6 +1,11 @@
-package com.vtstv.wolserver
+package com.vtstv.wolserver.service
 
-import android.app.*
+import android.app.ActivityManager
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -11,17 +16,22 @@ import android.os.PowerManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.vtstv.wolserver.core.engine.DevicePinger
+import com.vtstv.wolserver.core.engine.NetworkScanner
+import com.vtstv.wolserver.core.engine.WakeOnLan
+import com.vtstv.wolserver.core.scheduler.WolScheduler
+import com.vtstv.wolserver.data.model.WolConfig
+import com.vtstv.wolserver.data.repository.ConfigManager
+import com.vtstv.wolserver.server.WolHttpServer
+import com.vtstv.wolserver.ui.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 /**
- * Background service that runs the HTTP server for Wake-on-LAN functionality.
- * Runs as a foreground service to ensure it stays active even when the app is not in foreground.
- * 
- * Copyright (c) 2025-2026 Murr
- * https://github.com/vtstv/wolserver
+ * Foreground Service hosting the embedded HTTP daemon and background WoL scheduler.
+ * Holds partial WakeLock and WifiLock for uninterrupted standby availability.
  */
 class WolService : Service() {
 
@@ -29,7 +39,7 @@ class WolService : Service() {
         private const val TAG = "WolService"
         private const val NOTIFICATION_CHANNEL_ID = "wol_service_channel"
         private const val NOTIFICATION_ID = 1001
-        
+
         const val ACTION_START_SERVICE = "com.vtstv.wolserver.START_SERVICE"
         const val ACTION_STOP_SERVICE = "com.vtstv.wolserver.STOP_SERVICE"
         const val ACTION_RESTART_SERVICE = "com.vtstv.wolserver.RESTART_SERVICE"
@@ -50,13 +60,13 @@ class WolService : Service() {
     override fun onCreate() {
         super.onCreate()
         Log.i(TAG, "WolService created")
-        
+
         configManager = ConfigManager(this)
         wakeOnLan = WakeOnLan()
         devicePinger = DevicePinger()
         networkScanner = NetworkScanner(wakeOnLan)
         scheduler = WolScheduler(configManager, wakeOnLan)
-        
+
         acquireLocks()
         createNotificationChannel()
         startScheduler()
@@ -71,7 +81,7 @@ class WolService : Service() {
                 } catch (e: Exception) {
                     Log.w(TAG, "Error checking schedules: ${e.message}")
                 }
-                kotlinx.coroutines.delay(30000L) // Check every 30 seconds
+                kotlinx.coroutines.delay(30000L)
             }
         }
     }
@@ -116,15 +126,15 @@ class WolService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.i(TAG, "WolService onStartCommand: ${intent?.action}")
-        
+
         when (intent?.action) {
             ACTION_START_SERVICE -> startHttpServer()
             ACTION_STOP_SERVICE -> stopService()
             ACTION_RESTART_SERVICE -> restartHttpServer()
             else -> startHttpServer()
         }
-        
-        return START_STICKY // Restart service if killed
+
+        return START_STICKY
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -140,18 +150,17 @@ class WolService : Service() {
         serviceScope.launch {
             try {
                 config = configManager.loadConfig()
-                
+
                 if (config?.authToken?.isEmpty() == true) {
-                    // Generate a random token if none exists
                     config?.authToken = configManager.generateRandomToken()
                     configManager.saveConfig(config!!)
                     Log.i(TAG, "Generated new auth token")
                 }
-                
-                stopHttpServer() // Stop existing server if running
-                
+
+                stopHttpServer()
+
                 val serverIpAddress = getLocalIpAddress()
-                
+
                 httpServer = WolHttpServer(
                     context = this@WolService,
                     port = config?.httpPort ?: 8085,
@@ -163,13 +172,13 @@ class WolService : Service() {
                     scheduler = scheduler,
                     serverIpAddress = serverIpAddress
                 )
-                
+
                 httpServer?.start()
-                
+
                 startForeground(NOTIFICATION_ID, createNotification())
-                
+
                 Log.i(TAG, "HTTP server started on port ${config?.httpPort}")
-                
+
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to start HTTP server", e)
                 stopSelf()
@@ -206,7 +215,7 @@ class WolService : Service() {
                 description = "Wake-on-LAN background service"
                 setShowBadge(false)
             }
-            
+
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
@@ -243,7 +252,7 @@ class WolService : Service() {
             .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
             .build()
     }
-    
+
     private fun getLocalIpAddress(): String {
         try {
             val interfaces = java.util.Collections.list(java.net.NetworkInterface.getNetworkInterfaces())
@@ -252,7 +261,7 @@ class WolService : Service() {
                 for (addr in addrs) {
                     if (!addr.isLoopbackAddress) {
                         val sAddr = addr.hostAddress
-                        if (sAddr != null && sAddr.indexOf(':') < 0) { // IPv4
+                        if (sAddr != null && sAddr.indexOf(':') < 0) {
                             return sAddr
                         }
                     }
@@ -263,12 +272,8 @@ class WolService : Service() {
         }
         return "127.0.0.1"
     }
-    
-    /**
-     * Updates the notification when configuration changes
-     */
+
     fun updateNotification() {
-        // Check for notification permission on Android 13+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(
                     this,
@@ -279,42 +284,39 @@ class WolService : Service() {
                 return
             }
         }
-        
+
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(NOTIFICATION_ID, createNotification())
     }
-    
-    /**
-     * Companion object methods for external control
-     */
+
     object ServiceManager {
-        
+
         fun startService(context: Context) {
             val intent = Intent(context, WolService::class.java).apply {
                 action = ACTION_START_SERVICE
             }
-            
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(intent)
             } else {
                 context.startService(intent)
             }
         }
-        
+
         fun stopService(context: Context) {
             val intent = Intent(context, WolService::class.java).apply {
                 action = ACTION_STOP_SERVICE
             }
             context.startService(intent)
         }
-        
+
         fun restartService(context: Context) {
             val intent = Intent(context, WolService::class.java).apply {
                 action = ACTION_RESTART_SERVICE
             }
             context.startService(intent)
         }
-        
+
         fun isServiceRunning(context: Context): Boolean {
             val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
             @Suppress("DEPRECATION")

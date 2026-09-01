@@ -1,6 +1,7 @@
-package com.vtstv.wolserver
+package com.vtstv.wolserver.core.engine
 
 import android.util.Log
+import com.vtstv.wolserver.data.model.DiscoveredDevice
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -18,10 +19,7 @@ import java.net.Socket
 /**
  * Fast asynchronous LAN scanner with multi-strategy host & MAC discovery.
  * Combines active multi-port TCP/ICMP sweeps with kernel ARP/neighbor table parsing
- * to discover active computers, NAS units, consoles, and smart devices across the subnet.
- * 
- * Copyright (c) 2025-2026 Murr
- * https://github.com/vtstv/wolserver
+ * and NetBIOS / UPnP resolution to discover active computers, NAS units, and consoles.
  */
 class NetworkScanner(private val wakeOnLan: WakeOnLan) {
 
@@ -30,18 +28,6 @@ class NetworkScanner(private val wakeOnLan: WakeOnLan) {
         private val COMMON_PORTS = intArrayOf(80, 445, 22, 3389, 8080, 53, 139, 5000, 8000, 7, 9, 8888, 443)
     }
 
-    data class DiscoveredDevice(
-        val ip: String,
-        var mac: String,
-        var hostname: String,
-        var vendor: String = "",
-        var isOnline: Boolean = true
-    )
-
-    /**
-     * Scans the local subnet for active devices using parallel probes
-     * and multi-source ARP table discovery.
-     */
     suspend fun scanLocalSubnet(): List<DiscoveredDevice> = withContext(Dispatchers.IO) {
         val subnetPrefix = getLocalSubnetPrefix()
         if (subnetPrefix.isBlank()) {
@@ -52,12 +38,9 @@ class NetworkScanner(private val wakeOnLan: WakeOnLan) {
         val selfIp = getLocalIpAddress()
         Log.i(TAG, "Starting comprehensive subnet scan on $subnetPrefix.1..254 (Self: $selfIp)")
 
-        // 1. Probing Phase: Parallel sweep across all 254 hosts
         val hostIps = (1..254).map { "$subnetPrefix.$it" }.filter { it != selfIp }
-        
         val activeHostsMap = mutableMapOf<String, Boolean>()
 
-        // Chunk in groups of 32 for optimal concurrency without socket exhaustion
         hostIps.chunked(32).forEach { chunk ->
             val chunkResults = chunk.map { ip ->
                 async {
@@ -73,18 +56,15 @@ class NetworkScanner(private val wakeOnLan: WakeOnLan) {
             }
         }
 
-        // 2. ARP Discovery Phase: Gather MAC addresses from all available sources
         val arpMap = readAllArpSources()
         Log.i(TAG, "Discovered ${activeHostsMap.size} active hosts, gathered ${arpMap.size} ARP entries")
 
-        // Combine active probed hosts and any resolved ARP entries
         val allDiscoveredIps = (activeHostsMap.keys + arpMap.keys).toSet().filter { it != selfIp }
         val discoveredList = mutableListOf<DiscoveredDevice>()
 
         for (ip in allDiscoveredIps) {
             var rawMac = arpMap[ip] ?: ""
-            
-            // If MAC not in local ARP cache, probe via UPnP / TR-064 and NetBIOS
+
             if (rawMac.isBlank()) {
                 rawMac = resolveMacFromUpnp(ip) ?: resolveMacFromNetbios(ip) ?: ""
             }
@@ -109,16 +89,10 @@ class NetworkScanner(private val wakeOnLan: WakeOnLan) {
             )
         }
 
-        // Sort by IP address numerically
         discoveredList.sortedBy { ipToLong(it.ip) }
     }
 
-    /**
-     * Actively probes an IP address using ICMP reachability, TCP ports, and UDP packet.
-     * Returns true if host responds on any vector.
-     */
     private fun probeAndDetectHost(ip: String): Boolean {
-        // Step 1: Send quick UDP trigger to force OS ARP cache resolution
         try {
             DatagramSocket().use { socket ->
                 socket.soTimeout = 60
@@ -129,7 +103,6 @@ class NetworkScanner(private val wakeOnLan: WakeOnLan) {
             }
         } catch (ignored: Exception) {}
 
-        // Step 2: ICMP isReachable check
         try {
             val inet = InetAddress.getByName(ip)
             if (inet.isReachable(100)) {
@@ -137,7 +110,6 @@ class NetworkScanner(private val wakeOnLan: WakeOnLan) {
             }
         } catch (ignored: Exception) {}
 
-        // Step 3: Fast TCP socket check across top service ports
         for (port in COMMON_PORTS) {
             try {
                 Socket().use { socket ->
@@ -150,9 +122,6 @@ class NetworkScanner(private val wakeOnLan: WakeOnLan) {
         return false
     }
 
-    /**
-     * Resolves MAC address via UPnP / TR-064 device description XML on common ports.
-     */
     private fun resolveMacFromUpnp(ip: String): String? {
         val targets = listOf(
             "49000/tr64desc.xml",
@@ -175,15 +144,13 @@ class NetworkScanner(private val wakeOnLan: WakeOnLan) {
                 conn.setRequestProperty("User-Agent", "WOLServer/2.0")
                 if (conn.responseCode == 200) {
                     val body = conn.inputStream.bufferedReader().use { it.readText() }
-                    
-                    // Search for <serialNumber>AA:BB:CC:DD:EE:FF</serialNumber> or <macAddress>...</macAddress>
+
                     val serialRegex = Regex("<(?:serialNumber|macAddress|mac)>([^<]+)</(?:serialNumber|macAddress|mac)>", RegexOption.IGNORE_CASE)
                     val serialMatch = serialRegex.find(body)?.groupValues?.get(1)?.trim()
                     if (serialMatch != null && wakeOnLan.isValidMacAddress(serialMatch)) {
                         return serialMatch
                     }
 
-                    // Search for UDN uuid:....-....-MAC
                     val udnRegex = Regex("uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-([0-9a-fA-F]{12})", RegexOption.IGNORE_CASE)
                     val udnMatch = udnRegex.find(body)?.groupValues?.get(1)?.trim()
                     if (udnMatch != null && wakeOnLan.isValidMacAddress(udnMatch)) {
@@ -196,15 +163,10 @@ class NetworkScanner(private val wakeOnLan: WakeOnLan) {
         return null
     }
 
-    /**
-     * Resolves MAC address via NetBIOS Node Status query (UDP port 137).
-     * Windows PCs and Samba servers return their hardware MAC in node status replies.
-     */
     private fun resolveMacFromNetbios(ip: String): String? {
         try {
             DatagramSocket().use { socket ->
                 socket.soTimeout = 350
-                // NetBIOS Wildcard (*) Node Status Request (RFC 1002)
                 val query = byteArrayOf(
                     0xa2.toByte(), 0x48.toByte(), 0x00, 0x00, 0x00, 0x01, 0x00, 0x00,
                     0x00, 0x00, 0x00, 0x00, 0x20, 0x43, 0x4b, 0x41, 0x41, 0x41,
@@ -237,19 +199,12 @@ class NetworkScanner(private val wakeOnLan: WakeOnLan) {
         return null
     }
 
-    /**
-     * Collects ARP table data from multiple sources:
-     * - /proc/net/arp FileReader
-     * - 'ip neigh' process execution
-     * - 'cat /proc/net/arp' process execution
-     */
     private fun readAllArpSources(): Map<String, String> {
         val map = mutableMapOf<String, String>()
 
-        // Source 1: Direct /proc/net/arp read
         try {
             BufferedReader(FileReader("/proc/net/arp")).use { reader ->
-                reader.readLine() // skip header
+                reader.readLine()
                 var line: String?
                 while (reader.readLine().also { line = it } != null) {
                     val tokens = line!!.trim().split(Regex("\\s+"))
@@ -265,7 +220,6 @@ class NetworkScanner(private val wakeOnLan: WakeOnLan) {
             }
         } catch (ignored: Exception) {}
 
-        // Source 2: '/system/bin/ip neigh' or 'ip neigh' command
         if (map.isEmpty()) {
             val cmdList = listOf(arrayOf("/system/bin/ip", "neigh"), arrayOf("ip", "neigh"))
             for (cmd in cmdList) {

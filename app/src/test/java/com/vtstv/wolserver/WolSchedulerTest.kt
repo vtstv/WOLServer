@@ -1,5 +1,7 @@
 package com.vtstv.wolserver
 
+import com.vtstv.wolserver.core.scheduler.WolScheduler
+import com.vtstv.wolserver.data.model.WolSchedule
 import org.junit.Assert.*
 import org.junit.Test
 import java.util.Calendar

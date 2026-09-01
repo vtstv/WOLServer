@@ -1,6 +1,6 @@
-package com.vtstv.wolserver
+package com.vtstv.wolserver.core.engine
 
-import android.util.Log
+import com.vtstv.wolserver.data.model.WolDevice
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -13,9 +13,6 @@ import java.net.Socket
  * High-performance network reachability and liveness prober for target devices.
  * Uses ICMP ping with intelligent TCP socket fallback on standard service ports
  * (3389 RDP, 22 SSH, 445 SMB, 80 HTTP, 8080) to bypass Windows Firewall ICMP drops.
- * 
- * Copyright (c) 2025-2026 Murr
- * https://github.com/vtstv/wolserver
  */
 class DevicePinger {
 
@@ -30,12 +27,8 @@ class DevicePinger {
         val method: String = "ICMP"
     )
 
-    /**
-     * Checks if a device is online using ICMP and TCP probing.
-     */
     suspend fun pingDevice(device: WolDevice, timeoutMs: Int = 600): PingResult = withContext(Dispatchers.IO) {
         val targetIp = device.ipAddress.ifBlank {
-            // If device only has broadcast IP, attempt pinging broadcast address or return offline
             if (device.broadcastAddress != "255.255.255.255") device.broadcastAddress else ""
         }
 
@@ -46,9 +39,6 @@ class DevicePinger {
         pingIp(targetIp, device.pingPort, timeoutMs)
     }
 
-    /**
-     * Probes an IP address for reachability.
-     */
     suspend fun pingIp(ip: String, port: Int = 0, timeoutMs: Int = 600): PingResult = withContext(Dispatchers.IO) {
         if (ip.isBlank() || ip == "255.255.255.255") {
             return@withContext PingResult(isOnline = false, latencyMs = -1, method = "INVALID_IP")
@@ -88,9 +78,6 @@ class DevicePinger {
         PingResult(isOnline = false, latencyMs = -1, method = "UNREACHABLE")
     }
 
-    /**
-     * Probes a single TCP port with a fast socket connect.
-     */
     private fun probeTcpPort(ip: String, port: Int, timeoutMs: Int): Boolean {
         return try {
             Socket().use { socket ->
@@ -102,9 +89,6 @@ class DevicePinger {
         }
     }
 
-    /**
-     * Pings all devices in parallel and returns a map of deviceId -> PingResult.
-     */
     suspend fun pingAll(devices: List<WolDevice>): Map<String, PingResult> = withContext(Dispatchers.IO) {
         devices.map { device ->
             async {

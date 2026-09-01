@@ -1,6 +1,10 @@
 package com.vtstv.wolserver
 
 import com.google.gson.Gson
+import com.vtstv.wolserver.data.model.WolBackup
+import com.vtstv.wolserver.data.model.WolConfig
+import com.vtstv.wolserver.data.model.WolDevice
+import com.vtstv.wolserver.data.model.WolSchedule
 import org.junit.Assert.*
 import org.junit.Test
 

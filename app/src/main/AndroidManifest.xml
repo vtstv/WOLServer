@@ -33,7 +33,7 @@
 
         <!-- Main Activity for configuration -->
         <activity
-            android:name="com.vtstv.wolserver.MainActivity"
+            android:name="com.vtstv.wolserver.ui.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Leanback"
             android:screenOrientation="landscape">
@@ -46,20 +46,20 @@
 
         <!-- Log viewer activity -->
         <activity
-            android:name="com.vtstv.wolserver.LogViewerActivity"
+            android:name="com.vtstv.wolserver.ui.LogViewerActivity"
             android:exported="false"
             android:theme="@style/Theme.Leanback" />
 
         <!-- Background service for HTTP server -->
         <service
-            android:name="com.vtstv.wolserver.WolService"
+            android:name="com.vtstv.wolserver.service.WolService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
 
         <!-- Boot receiver for auto-start -->
         <receiver
-            android:name="com.vtstv.wolserver.BootReceiver"
+            android:name="com.vtstv.wolserver.service.BootReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter android:priority="1000">
