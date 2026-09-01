@@ -13,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -266,9 +267,11 @@ class MainActivity : AppCompatActivity() {
         )
         val spinnerAdapter = ArrayAdapter(
             this,
-            android.R.layout.simple_spinner_dropdown_item,
+            R.layout.item_spinner,
             iconOptions.map { it.first }
-        )
+        ).apply {
+            setDropDownViewResource(R.layout.item_spinner_dropdown)
+        }
         spinnerIcon.adapter = spinnerAdapter
 
         // Populate fields
@@ -430,8 +433,9 @@ class MainActivity : AppCompatActivity() {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.dialog_server_settings)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
         dialog.window?.setLayout(
-            (resources.displayMetrics.widthPixels * 0.70).toInt(),
+            (resources.displayMetrics.widthPixels * 0.85).toInt(),
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
 
@@ -466,9 +470,11 @@ class MainActivity : AppCompatActivity() {
         )
         val langAdapter = ArrayAdapter(
             this,
-            android.R.layout.simple_spinner_dropdown_item,
+            R.layout.item_spinner,
             langOptions.map { it.second }
-        )
+        ).apply {
+            setDropDownViewResource(R.layout.item_spinner_dropdown)
+        }
         spinnerLanguage.adapter = langAdapter
         val currentLang = LocaleHelper.getLanguage(this)
         val initialLangIdx = langOptions.indexOfFirst { it.first == currentLang }.coerceAtLeast(0)

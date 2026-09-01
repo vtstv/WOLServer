@@ -1,255 +1,297 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width=" match_parent"
     android:layout_height="wrap_content"
-    android:background="#151B2B"
-    android:padding="20dp">
+    android:orientation="vertical"
+    android:background="@drawable/bg_server_card"
+    android:paddingStart="28dp"
+    android:paddingEnd="28dp"
+    android:paddingTop="20dp"
+    android:paddingBottom="20dp">
 
+    <!-- Title Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
 
-        <!-- Title -->
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/dialog_settings_title"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="#00E5FF"
-            android:layout_marginBottom="16dp" />
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
 
-        <!-- Language Selection -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/label_language"
-            android:textSize="14sp"
-            android:textColor="#94A3B8"
-            android:layout_marginBottom="4dp" />
+    <!-- 2-Column Main Content -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:baselineAligned="false">
 
-        <Spinner
-            android:id="@+id/settingsLanguage"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@drawable/bg_edit_text_selector"
-            android:focusable="true"
-            android:layout_marginBottom="14dp" />
-
-        <!-- Web Password -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/label_web_password"
-            android:textSize="14sp"
-            android:textColor="#94A3B8"
-            android:layout_marginBottom="4dp" />
-
-        <EditText
-            android:id="@+id/settingsWebPassword"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:hint="admin123"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#64748B"
-            android:textSize="15sp"
-            android:padding="10dp"
-            android:inputType="textPassword"
-            android:background="@drawable/bg_edit_text_selector"
-            android:focusable="true"
-            android:layout_marginBottom="14dp" />
-
-        <!-- API Auth Token -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/label_api_token"
-            android:textSize="14sp"
-            android:textColor="#94A3B8"
-            android:layout_marginBottom="4dp" />
-
+        <!-- Left Column: Security & Network -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="14dp">
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingEnd="16dp">
+
+            <!-- Web Password -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_web_password"
+                android:textSize="13sp"
+                android:textColor="#94A3B8"
+                android:layout_marginBottom="3dp" />
 
             <EditText
-                android:id="@+id/settingsAuthToken"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:hint="Enter auth token"
-                android:textColor="#00E5FF"
+                android:id="@+id/settingsWebPassword"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:hint="admin123"
+                android:textColor="#FFFFFF"
                 android:textColorHint="#64748B"
-                android:textSize="13sp"
-                android:typeface="monospace"
-                android:padding="10dp"
+                android:textSize="14sp"
+                android:padding="8dp"
                 android:inputType="textPassword"
                 android:background="@drawable/bg_edit_text_selector"
-                android:focusable="true" />
-
-            <Button
-                android:id="@+id/btnToggleToken"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:text="👁️"
-                android:background="@drawable/bg_btn_secondary_selector"
                 android:focusable="true"
-                android:layout_marginStart="6dp" />
+                android:layout_marginBottom="10dp" />
 
-            <Button
-                android:id="@+id/btnGenerateToken"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:text="@string/btn_token_new"
-                android:textColor="#FFFFFF"
-                android:background="@drawable/bg_btn_secondary_selector"
-                android:focusable="true"
-                android:layout_marginStart="6dp" />
-        </LinearLayout>
-
-        <!-- HTTP Port -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/label_http_port"
-            android:textSize="14sp"
-            android:textColor="#94A3B8"
-            android:layout_marginBottom="4dp" />
-
-        <EditText
-            android:id="@+id/settingsHttpPort"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="8085"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#64748B"
-            android:textSize="15sp"
-            android:inputType="number"
-            android:padding="10dp"
-            android:background="@drawable/bg_edit_text_selector"
-            android:focusable="true"
-            android:layout_marginBottom="14dp" />
-
-        <!-- Switches -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="10dp">
-
+            <!-- API Auth Token -->
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/label_require_auth"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp" />
-
-            <Switch
-                android:id="@+id/switchRequireAuth"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:focusable="true" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="20dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/label_auto_start"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp" />
-
-            <Switch
-                android:id="@+id/switchAutoStart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:focusable="true" />
-        </LinearLayout>
-
-        <!-- Tools & Diagnostics -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/label_diagnostics_info"
-            android:textSize="14sp"
-            android:textColor="#94A3B8"
-            android:layout_marginBottom="8dp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="24dp">
-
-            <Button
-                android:id="@+id/btnSettingsLogs"
-                android:layout_width="0dp"
-                android:layout_height="44dp"
-                android:layout_weight="1"
-                android:text="@string/btn_logs"
-                android:textColor="#FFFFFF"
+                android:text="@string/label_api_token"
                 android:textSize="13sp"
-                android:background="@drawable/bg_btn_secondary_selector"
-                android:focusable="true"
-                android:layout_marginEnd="10dp" />
-
-            <Button
-                android:id="@+id/btnSettingsAbout"
-                android:layout_width="0dp"
-                android:layout_height="44dp"
-                android:layout_weight="1"
-                android:text="@string/btn_about"
-                android:textColor="#FFFFFF"
-                android:textSize="13sp"
-                android:background="@drawable/bg_btn_secondary_selector"
-                android:focusable="true" />
-        </LinearLayout>
-
-        <!-- Buttons -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="end">
-
-            <Button
-                android:id="@+id/btnCancelSettings"
-                android:layout_width="wrap_content"
-                android:layout_height="44dp"
-                android:text="@string/btn_cancel"
                 android:textColor="#94A3B8"
+                android:layout_marginBottom="3dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp">
+
+                <EditText
+                    android:id="@+id/settingsAuthToken"
+                    android:layout_width="0dp"
+                    android:layout_height="42dp"
+                    android:layout_weight="1"
+                    android:hint="Enter auth token"
+                    android:textColor="#00E5FF"
+                    android:textColorHint="#64748B"
+                    android:textSize="12sp"
+                    android:typeface="monospace"
+                    android:padding="8dp"
+                    android:inputType="textPassword"
+                    android:background="@drawable/bg_edit_text_selector"
+                    android:focusable="true" />
+
+                <Button
+                    android:id="@+id/btnToggleToken"
+                    android:layout_width="44dp"
+                    android:layout_height="42dp"
+                    android:text="👁️"
+                    android:textSize="14sp"
+                    android:padding="0dp"
+                    android:background="@drawable/bg_btn_secondary_selector"
+                    android:focusable="true"
+                    android:layout_marginStart="6dp" />
+
+                <Button
+                    android:id="@+id/btnGenerateToken"
+                    android:layout_width="wrap_content"
+                    android:layout_height="42dp"
+                    android:text="@string/btn_token_new"
+                    android:textSize="12sp"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/bg_btn_secondary_selector"
+                    android:focusable="true"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:layout_marginStart="6dp" />
+            </LinearLayout>
+
+            <!-- HTTP Port -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_http_port"
+                android:textSize="13sp"
+                android:textColor="#94A3B8"
+                android:layout_marginBottom="3dp" />
+
+            <EditText
+                android:id="@+id/settingsHttpPort"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:text="8085"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#64748B"
+                android:textSize="14sp"
+                android:inputType="number"
+                android:padding="8dp"
+                android:background="@drawable/bg_edit_text_selector"
+                android:focusable="true"
+                android:layout_marginBottom="8dp" />
+
+        </LinearLayout>
+
+        <!-- Right Column: Language, Switches & Diagnostics -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingStart="16dp">
+
+            <!-- Language Selection -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_language"
+                android:textSize="13sp"
+                android:textColor="#94A3B8"
+                android:layout_marginBottom="3dp" />
+
+            <Spinner
+                android:id="@+id/settingsLanguage"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
                 android:background="@drawable/bg_btn_secondary_selector"
                 android:focusable="true"
-                android:layout_marginEnd="10dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp" />
+                android:layout_marginBottom="12dp" />
 
-            <Button
-                android:id="@+id/btnSaveSettings"
-                android:layout_width="wrap_content"
-                android:layout_height="44dp"
-                android:text="@string/btn_save_apply"
-                android:textColor="#000000"
-                android:textStyle="bold"
-                android:background="@drawable/bg_btn_primary_selector"
-                android:focusable="true"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp" />
+            <!-- Switches -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="6dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/label_require_auth"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp" />
+
+                <Switch
+                    android:id="@+id/switchRequireAuth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:focusable="true" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="14dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/label_auto_start"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp" />
+
+                <Switch
+                    android:id="@+id/switchAutoStart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:focusable="true" />
+            </LinearLayout>
+
+            <!-- Diagnostics Tools -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_diagnostics_info"
+                android:textSize="13sp"
+                android:textColor="#94A3B8"
+                android:layout_marginBottom="4dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="14dp">
+
+                <Button
+                    android:id="@+id/btnSettingsLogs"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:text="@string/btn_logs"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp"
+                    android:background="@drawable/bg_btn_secondary_selector"
+                    android:focusable="true"
+                    android:layout_marginEnd="8dp" />
+
+                <Button
+                    android:id="@+id/btnSettingsAbout"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:text="@string/btn_about"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp"
+                    android:background="@drawable/bg_btn_secondary_selector"
+                    android:focusable="true" />
+            </LinearLayout>
 
         </LinearLayout>
 
     </LinearLayout>
 
-</ScrollView>
+    <!-- Bottom Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginTop="8dp">
+
+        <Button
+            android:id="@+id/btnCancelSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:text="@string/btn_cancel"
+            android:textColor="#94A3B8"
+            android:textSize="13sp"
+            android:background="@drawable/bg_btn_secondary_selector"
+            android:focusable="true"
+            android:layout_marginEnd="12dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp" />
+
+        <Button
+            android:id="@+id/btnSaveSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:text="@string/btn_save_apply"
+            android:textColor="#000000"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:background="@drawable/bg_btn_primary_selector"
+            android:focusable="true"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp" />
+
+    </LinearLayout>
+
+</LinearLayout>
