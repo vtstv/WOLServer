@@ -27,7 +27,6 @@
 -keep class com.google.gson.** { *; }
 -keep class * implements com.google.gson.TypeAdapterFactory
 -keep class * implements com.google.gson.JsonSerializer
--keep class * implements com.google.gson.JsonDeserializer
-
-# Keep our config classes for JSON serialization
--keep class com.firetv.wol.WolConfig { *; }
+# Keep our config classes and models for JSON serialization
+-keep class com.vtstv.wolserver.** { *; }
+-keepclassmembers class com.vtstv.wolserver.** { *; }

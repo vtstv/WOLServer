@@ -62,3 +62,12 @@ sign-apk.ps1
 
 # Log files
 *.log
+
+# AI Agents instruction files (local only)
+AGENTS.md
+agents.md
+
+# Secret keys and signing credentials (local only)
+secrets/
+keystore.properties
+signing.properties

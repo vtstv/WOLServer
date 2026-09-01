@@ -4,8 +4,10 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.IBinder
+import android.os.PowerManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -18,7 +20,7 @@ import kotlinx.coroutines.launch
  * Background service that runs the HTTP server for Wake-on-LAN functionality.
  * Runs as a foreground service to ensure it stays active even when the app is not in foreground.
  * 
- * Copyright (c) 2025 Murr
+ * Copyright (c) 2025-2026 Murr
  * https://github.com/vtstv/wolserver
  */
 class WolService : Service() {
@@ -37,7 +39,13 @@ class WolService : Service() {
     private var config: WolConfig? = null
     private lateinit var configManager: ConfigManager
     private lateinit var wakeOnLan: WakeOnLan
+    private lateinit var devicePinger: DevicePinger
+    private lateinit var networkScanner: NetworkScanner
+    private lateinit var scheduler: WolScheduler
     private val serviceScope = CoroutineScope(Dispatchers.Main + Job())
+    private var schedulerJob: Job? = null
+    private var wakeLock: PowerManager.WakeLock? = null
+    private var wifiLock: WifiManager.WifiLock? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -45,8 +53,65 @@ class WolService : Service() {
         
         configManager = ConfigManager(this)
         wakeOnLan = WakeOnLan()
+        devicePinger = DevicePinger()
+        networkScanner = NetworkScanner(wakeOnLan)
+        scheduler = WolScheduler(configManager, wakeOnLan)
         
+        acquireLocks()
         createNotificationChannel()
+        startScheduler()
+    }
+
+    private fun startScheduler() {
+        schedulerJob?.cancel()
+        schedulerJob = serviceScope.launch {
+            while (true) {
+                try {
+                    scheduler.checkAndTriggerSchedules()
+                } catch (e: Exception) {
+                    Log.w(TAG, "Error checking schedules: ${e.message}")
+                }
+                kotlinx.coroutines.delay(30000L) // Check every 30 seconds
+            }
+        }
+    }
+
+    private fun acquireLocks() {
+        try {
+            val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+            wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "WolService:WakeLock").apply {
+                setReferenceCounted(false)
+                acquire()
+            }
+
+            val wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+            val lockMode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                WifiManager.WIFI_MODE_FULL_LOW_LATENCY
+            } else {
+                @Suppress("DEPRECATION")
+                WifiManager.WIFI_MODE_FULL_HIGH_PERF
+            }
+            wifiLock = wifiManager.createWifiLock(lockMode, "WolService:WifiLock").apply {
+                setReferenceCounted(false)
+                acquire()
+            }
+            Log.i(TAG, "Acquired WakeLock and WifiLock for uninterrupted standby daemon")
+        } catch (e: Exception) {
+            Log.w(TAG, "Could not acquire WakeLock/WifiLock: ${e.message}")
+        }
+    }
+
+    private fun releaseLocks() {
+        try {
+            schedulerJob?.cancel()
+            schedulerJob = null
+            wakeLock?.let { if (it.isHeld) it.release() }
+            wakeLock = null
+            wifiLock?.let { if (it.isHeld) it.release() }
+            wifiLock = null
+        } catch (e: Exception) {
+            Log.w(TAG, "Error releasing locks: ${e.message}")
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -68,6 +133,7 @@ class WolService : Service() {
         super.onDestroy()
         Log.i(TAG, "WolService destroyed")
         stopHttpServer()
+        releaseLocks()
     }
 
     private fun startHttpServer() {
@@ -87,10 +153,14 @@ class WolService : Service() {
                 val serverIpAddress = getLocalIpAddress()
                 
                 httpServer = WolHttpServer(
+                    context = this@WolService,
                     port = config?.httpPort ?: 8085,
                     config = config!!,
                     configManager = configManager,
                     wakeOnLan = wakeOnLan,
+                    devicePinger = devicePinger,
+                    networkScanner = networkScanner,
+                    scheduler = scheduler,
                     serverIpAddress = serverIpAddress
                 )
                 

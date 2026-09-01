@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:background="#151B2B"
+    android:paddingStart="32dp"
+    android:paddingEnd="32dp"
+    android:paddingTop="28dp"
+    android:paddingBottom="28dp">
+
+    <!-- Animated Glowing Icon Container -->
+    <FrameLayout
+        android:id="@+id/aboutIconContainer"
+        android:layout_width="84dp"
+        android:layout_height="84dp"
+        android:layout_marginBottom="16dp">
+
+        <View
+            android:id="@+id/aboutGlowRing"
+            android:layout_width="84dp"
+            android:layout_height="84dp"
+            android:background="@drawable/bg_status_badge" />
+
+        <ImageView
+            android:id="@+id/aboutAppIcon"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center"
+            android:src="@drawable/wol_firetv"
+            android:contentDescription="@string/app_name" />
+    </FrameLayout>
+
+    <!-- App Title & Version -->
+    <TextView
+        android:id="@+id/aboutTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/about_version"
+        android:textSize="13sp"
+        android:textColor="#00E5FF"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Description -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/about_description"
+        android:textSize="13sp"
+        android:textColor="#94A3B8"
+        android:gravity="center"
+        android:lineSpacingMultiplier="1.2"
+        android:layout_marginBottom="20dp" />
+
+    <!-- Author & Copyright Card -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_server_card"
+        android:padding="16dp"
+        android:gravity="center_horizontal"
+        android:layout_marginBottom="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/about_created_by"
+            android:textSize="12sp"
+            android:textColor="#64748B" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Murr"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#FF9900"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="6dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🌐 https://github.com/vtstv"
+            android:textSize="14sp"
+            android:textColor="#00E5FF"
+            android:typeface="monospace"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📦 https://github.com/vtstv/wolserver"
+            android:textSize="12sp"
+            android:textColor="#94A3B8"
+            android:typeface="monospace"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/about_copyright"
+            android:textSize="11sp"
+            android:textColor="#64748B" />
+
+    </LinearLayout>
+
+    <!-- Close Button -->
+    <Button
+        android:id="@+id/btnAboutClose"
+        android:layout_width="160dp"
+        android:layout_height="44dp"
+        android:text="@string/btn_close"
+        android:textColor="#000000"
+        android:textStyle="bold"
+        android:background="@drawable/bg_btn_primary_selector"
+        android:focusable="true" />
+
+</LinearLayout>

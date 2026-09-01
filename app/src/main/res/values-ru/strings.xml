@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Simple WOL Server</string>
+    <string name="app_subtitle">Fire TV / Android TV Edition</string>
+    <string name="service_description">Фоновая служба Wake-on-LAN</string>
+    <string name="notification_title">Simple WOL Server</string>
+    <string name="notification_text">HTTP сервер запущен на порту %1$d</string>
+
+    <!-- Top Header & Navigation -->
+    <string name="btn_wake_all">⚡ Разбудить все</string>
+    <string name="btn_add_device">➕ Добавить</string>
+    <string name="btn_language">🌐 Русский</string>
+    <string name="btn_settings">⚙️ Настройки</string>
+    <string name="btn_logs">📋 Логи</string>
+    <string name="btn_about">ℹ️ О программе</string>
+
+    <string name="dialog_language_title">Выберите язык / Select Language</string>
+    <string name="label_language">🌐 Язык интерфейса</string>
+    <string name="lang_english">English</string>
+    <string name="lang_deutsch">Deutsch</string>
+    <string name="lang_russian">Русский</string>
+    <string name="toast_language_changed">Язык изменен на %1$s</string>
+    <string name="toast_token_copied">Токен скопирован в буфер обмена</string>
+
+    <!-- Status Card -->
+    <string name="daemon_status_title">📡 Статус сервера</string>
+    <string name="service_running">🟢 Служба работает</string>
+    <string name="service_stopped">🔴 Служба остановлена</string>
+    <string name="web_endpoint_label">Веб-панель и API адрес:</string>
+    <string name="btn_stop_service">ОСТАНОВИТЬ СЛУЖБУ</string>
+    <string name="btn_start_service">ЗАПУСТИТЬ СЛУЖБУ</string>
+    <string name="footer_instructions">Откройте ссылку в браузере на телефоне или ПК для управления или интеграции с Home Assistant.</string>
+
+    <!-- Devices List -->
+    <string name="target_devices_header">Целевые устройства (%1$d)</string>
+    <string name="hint_dpad_browse">Листайте пультом D-Pad ◀▶</string>
+    <string name="add_device_card_title">Добавить устройство</string>
+    <string name="add_device_card_sub">Настроить цель WoL</string>
+    <string name="btn_wake">⚡ РАЗБУДИТЬ</string>
+    <string name="hint_footer_remote">💡 [Выбор] разбудить | [Ред.] изменить MAC | [Удалить] убрать карточку</string>
+
+    <!-- Add/Edit Device Dialog -->
+    <string name="dialog_add_device_title">+ Добавить устройство WoL</string>
+    <string name="dialog_edit_device_title">Редактировать устройство WoL</string>
+    <string name="label_device_name">Имя устройства</string>
+    <string name="hint_device_name">Игровой ПК / Сервер</string>
+    <string name="label_mac_address">Целевой MAC-адрес</string>
+    <string name="hint_mac_address">AA : BB : CC : DD : EE : FF</string>
+    <string name="label_device_type">Тип устройства / Иконка</string>
+    <string name="label_broadcast_ip">Широковещательный IP</string>
+    <string name="label_wol_port">Порт WoL</string>
+    <string name="btn_cancel">ОТМЕНА</string>
+    <string name="btn_save_device">СОХРАНИТЬ</string>
+    <string name="btn_delete">УДАЛИТЬ</string>
+
+    <!-- Device Types -->
+    <string name="device_type_desktop">🖥️ Настольный ПК</string>
+    <string name="device_type_server">🗄️ Сервер / NAS</string>
+    <string name="device_type_laptop">💻 Ноутбук</string>
+    <string name="device_type_console">🎮 Консоль</string>
+    <string name="device_type_tv">📺 Smart TV</string>
+
+    <!-- Settings Dialog -->
+    <string name="dialog_settings_title">⚙️ Настройки сервера и защиты</string>
+    <string name="label_web_password">Пароль веб-панели</string>
+    <string name="label_api_token">Токен авторизации API</string>
+    <string name="btn_token_new">🎲 СГЕНЕРИРОВАТЬ</string>
+    <string name="label_http_port">Порт встроенного HTTP сервера</string>
+    <string name="label_require_auth">Требовать токен для /wake</string>
+    <string name="label_auto_start">Автозапуск при включении устройства</string>
+    <string name="label_app_language">Язык приложения / Language / Sprache</string>
+    <string name="btn_save_apply">СОХРАНИТЬ И ПРИМЕНИТЬ</string>
+
+    <!-- About Dialog -->
+    <string name="about_version">Версия 2.0.0 (Fire TV Edition)</string>
+    <string name="about_description">Легковесный Wake-on-LAN демон и центр управления устройствами для Amazon Fire TV и Android TV.</string>
+    <string name="about_created_by">Создано с ❤️ автором</string>
+    <string name="about_copyright">Copyright © 2025-2026 Murr. Все права защищены.</string>
+    <string name="btn_close">ЗАКРЫТЬ</string>
+
+    <!-- Logs Activity -->
+    <string name="logs_activity_title">📋 Системные и сетевые логи</string>
+    <string name="btn_back">◀ НАЗАД</string>
+    <string name="btn_refresh">ОБНОВИТЬ</string>
+    <string name="btn_clear">🗑️ ОЧИСТИТЬ</string>
+    <string name="logs_debug_tip">💡 Подсказка: используйте \'adb logcat -s WolService:* WolHttpServer:* WakeOnLan:*\' в терминале ПК</string>
+
+    <!-- Toasts & Notifications -->
+    <string name="toast_no_devices">Нет добавленных устройств. Нажмите [+ Добавить].</string>
+    <string name="toast_waking_device">Отправка Magic Packet на %1$s...</string>
+    <string name="toast_woken_device">⚡ Magic Packet отправлен на %1$s!</string>
+    <string name="toast_woken_all">⚡ Magic Packet отправлен на все %1$d устройств!</string>
+    <string name="toast_device_saved">Устройство \"%1$s\" успешно сохранено!</string>
+    <string name="toast_device_deleted">Устройство \"%1$s\" удалено.</string>
+    <string name="toast_settings_saved">Настройки успешно сохранены!</string>
+    <string name="toast_invalid_mac">Неверный формат MAC! Пример: AA:BB:CC:DD:EE:FF</string>
+    <string name="toast_empty_fields">Пожалуйста, укажите имя устройства и MAC-адрес</string>
+    <string name="toast_invalid_port">Порт должен быть числом от 1 до 65535</string>
+    <string name="dialog_delete_confirm_title">Удалить устройство?</string>
+    <string name="dialog_delete_confirm_msg">Вы уверены, что хотите удалить \"%1$s\" (%2$s)?</string>
+    <string name="dialog_btn_cancel">ЗАКРЫТЬ</string>
+
+    <!-- Scanner & Status Pro Strings -->
+    <string name="btn_scan">🔍 Поиск</string>
+    <string name="status_online">🟢 В сети (%1$dмс)</string>
+    <string name="status_offline">⚪ Не в сети</string>
+    <string name="scan_title">🔍 Поиск устройств в сети (ARP)</string>
+    <string name="scan_prompt">Нажмите [СКАНИРОВАТЬ СЕТЬ], чтобы найти включенные ПК, серверы и консоли.</string>
+    <string name="scan_scanning">Сканирование локальной подсети...</string>
+    <string name="scan_now">СКАНИРОВАТЬ СЕТЬ</string>
+    <string name="scan_empty">Активные устройства в ARP-таблице не найдены.</string>
+    <string name="label_target_ip">IP-адрес цели (для проверки онлайн-статуса)</string>
+    <string name="hint_target_ip">192.168.0.100</string>
+</resources>

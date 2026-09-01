@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_server_card"
+    android:padding="28dp">
+
+    <!-- Header -->
+    <TextView
+        android:id="@+id/dialogLangTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/dialog_language_title"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Language Option 1: English -->
+    <Button
+        android:id="@+id/btnLangEn"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="🇬🇧 English"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/bg_btn_secondary_selector"
+        android:focusable="true"
+        android:layout_marginBottom="12dp"
+        android:nextFocusDown="@+id/btnLangDe" />
+
+    <!-- Language Option 2: Deutsch -->
+    <Button
+        android:id="@+id/btnLangDe"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="🇩🇪 Deutsch"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/bg_btn_secondary_selector"
+        android:focusable="true"
+        android:layout_marginBottom="12dp"
+        android:nextFocusUp="@+id/btnLangEn"
+        android:nextFocusDown="@+id/btnLangRu" />
+
+    <!-- Language Option 3: Русский -->
+    <Button
+        android:id="@+id/btnLangRu"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="🇷🇺 Русский"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/bg_btn_secondary_selector"
+        android:focusable="true"
+        android:layout_marginBottom="20dp"
+        android:nextFocusUp="@+id/btnLangDe"
+        android:nextFocusDown="@+id/btnCancelLang" />
+
+    <!-- Cancel Button -->
+    <Button
+        android:id="@+id/btnCancelLang"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:text="@string/btn_cancel"
+        android:textSize="14sp"
+        android:textColor="#94A3B8"
+        android:background="@drawable/bg_btn_secondary_selector"
+        android:focusable="true"
+        android:layout_gravity="center_horizontal"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:nextFocusUp="@+id/btnLangRu" />
+
+</LinearLayout>

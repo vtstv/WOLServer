@@ -1,7 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Simple WOL Server</string>
+    <string name="app_subtitle">Fire TV / Android TV Edition</string>
     <string name="service_description">Wake-on-LAN background service</string>
     <string name="notification_title">Simple WOL Server</string>
-    <string name="notification_text">HTTP server running</string>
+    <string name="notification_text">HTTP server running on port %1$d</string>
+
+    <!-- Top Header & Navigation -->
+    <string name="btn_wake_all">⚡ Wake All</string>
+    <string name="btn_add_device">➕ Add Device</string>
+    <string name="btn_language">🌐 English</string>
+    <string name="btn_settings">⚙️ Settings</string>
+    <string name="btn_logs">📋 Logs</string>
+    <string name="btn_about">ℹ️ About</string>
+
+    <string name="dialog_language_title">Select Language / Sprache / Язык</string>
+    <string name="label_language">🌐 Interface Language</string>
+    <string name="lang_english">English</string>
+    <string name="lang_deutsch">Deutsch</string>
+    <string name="lang_russian">Русский</string>
+    <string name="toast_language_changed">Language changed to %1$s</string>
+    <string name="toast_token_copied">Token copied to clipboard</string>
+
+    <!-- Status Card -->
+    <string name="daemon_status_title">📡 Server Daemon Status</string>
+    <string name="service_running">🟢 Service Running</string>
+    <string name="service_stopped">🔴 Service Stopped</string>
+    <string name="web_endpoint_label">Web Control &amp; API Endpoint:</string>
+    <string name="btn_stop_service">STOP SERVICE</string>
+    <string name="btn_start_service">START SERVICE</string>
+    <string name="footer_instructions">Open the link in your browser on phone or PC to access the web dashboard or use API endpoints with Home Assistant.</string>
+
+    <!-- Devices List -->
+    <string name="target_devices_header">Target Devices (%1$d)</string>
+    <string name="hint_dpad_browse">Use Remote D-Pad ◀▶ to browse</string>
+    <string name="add_device_card_title">Add Device</string>
+    <string name="add_device_card_sub">Configure WoL Target</string>
+    <string name="btn_wake">⚡ WAKE</string>
+    <string name="hint_footer_remote">💡 Press [Select] on any card to Wake | Click [Edit] to change MAC | Click [Delete] to remove</string>
+
+    <!-- Add/Edit Device Dialog -->
+    <string name="dialog_add_device_title">+ Add WoL Target Device</string>
+    <string name="dialog_edit_device_title">Edit WoL Target Device</string>
+    <string name="label_device_name">Device Name</string>
+    <string name="hint_device_name">Gaming PC / Server</string>
+    <string name="label_mac_address">Target MAC Address</string>
+    <string name="hint_mac_address">AA : BB : CC : DD : EE : FF</string>
+    <string name="label_device_type">Device Type / Icon</string>
+    <string name="label_broadcast_ip">Broadcast IP</string>
+    <string name="label_wol_port">WoL Port</string>
+    <string name="btn_cancel">CANCEL</string>
+    <string name="btn_save_device">SAVE DEVICE</string>
+    <string name="btn_delete">DELETE</string>
+
+    <!-- Device Types -->
+    <string name="device_type_desktop">🖥️ Desktop PC</string>
+    <string name="device_type_server">🗄️ Home Server / NAS</string>
+    <string name="device_type_laptop">💻 Laptop</string>
+    <string name="device_type_console">🎮 Game Console</string>
+    <string name="device_type_tv">📺 Smart TV</string>
+
+    <!-- Settings Dialog -->
+    <string name="dialog_settings_title">⚙️ Server &amp; Security Settings</string>
+    <string name="label_web_password">Web Dashboard Password</string>
+    <string name="label_api_token">API Authentication Token</string>
+    <string name="btn_token_new">🎲 NEW</string>
+    <string name="label_http_port">Embedded HTTP Server Port</string>
+    <string name="label_require_auth">Require Token for /wake endpoint</string>
+    <string name="label_auto_start">Auto-start Server on Device Boot</string>
+    <string name="label_app_language">App Language / Sprache / Язык</string>
+    <string name="btn_save_apply">SAVE &amp; APPLY</string>
+
+    <!-- About Dialog -->
+    <string name="about_version">Version 2.0.0 (Fire TV Edition)</string>
+    <string name="about_description">High-performance Wake-on-LAN daemon &amp; multi-device management hub for Amazon Fire TV and Android TV.</string>
+    <string name="about_created_by">Created with ❤️ by</string>
+    <string name="about_copyright">Copyright © 2025-2026 Murr. All rights reserved.</string>
+    <string name="btn_close">CLOSE</string>
+
+    <!-- Logs Activity -->
+    <string name="logs_activity_title">📋 Service &amp; Network Logs</string>
+    <string name="btn_back">◀ BACK</string>
+    <string name="btn_refresh">REFRESH</string>
+    <string name="btn_clear">🗑️ CLEAR</string>
+    <string name="logs_debug_tip">💡 Debugging Tip: Use \'adb logcat -s WolService:* WolHttpServer:* WakeOnLan:*\' from your PC terminal</string>
+
+    <!-- Toasts & Notifications -->
+    <string name="toast_no_devices">No devices configured. Click [Add Device] first.</string>
+    <string name="toast_waking_device">Sending magic packet to %1$s...</string>
+    <string name="toast_woken_device">⚡ Magic packet sent to %1$s!</string>
+    <string name="toast_woken_all">⚡ Magic packets sent to all %1$d devices!</string>
+    <string name="toast_device_saved">Device \"%1$s\" saved successfully!</string>
+    <string name="toast_device_deleted">Device \"%1$s\" deleted.</string>
+    <string name="toast_settings_saved">Settings applied successfully!</string>
+    <string name="toast_invalid_mac">Invalid MAC address! Use format AA:BB:CC:DD:EE:FF</string>
+    <string name="toast_empty_fields">Please enter Device Name and MAC Address</string>
+    <string name="toast_invalid_port">Port must be between 1 and 65535</string>
+    <string name="dialog_delete_confirm_title">Delete Device?</string>
+    <string name="dialog_delete_confirm_msg">Are you sure you want to remove \"%1$s\" (%2$s)?</string>
+    <string name="dialog_btn_cancel">CLOSE</string>
+
+    <!-- Scanner & Status Pro Strings -->
+    <string name="btn_scan">🔍 Scan</string>
+    <string name="status_online">🟢 Online (%1$dms)</string>
+    <string name="status_offline">⚪ Offline</string>
+    <string name="scan_title">🔍 LAN Device Scanner</string>
+    <string name="scan_prompt">Press [SCAN SUBNET] to discover active computers &amp; servers on your local network.</string>
+    <string name="scan_scanning">Scanning local subnet for active devices...</string>
+    <string name="scan_now">SCAN SUBNET</string>
+    <string name="scan_empty">No active devices found in local ARP cache.</string>
+    <string name="label_target_ip">Target IP Address (Optional for Ping)</string>
+    <string name="hint_target_ip">192.168.0.100</string>
 </resources>

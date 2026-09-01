@@ -15,9 +15,6 @@ import java.io.InputStreamReader
 /**
  * Simple log viewer activity that displays recent logcat entries for the WOL application.
  * Useful for debugging and monitoring the service status.
- * 
- * Copyright (c) 2025 Murr
- * https://github.com/vtstv/wolserver
  */
 class LogViewerActivity : AppCompatActivity() {
 
@@ -25,6 +22,11 @@ class LogViewerActivity : AppCompatActivity() {
     private lateinit var scrollView: ScrollView
     private lateinit var buttonRefresh: Button
     private lateinit var buttonClear: Button
+    private lateinit var buttonBack: Button
+
+    override fun attachBaseContext(newBase: android.content.Context) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +35,7 @@ class LogViewerActivity : AppCompatActivity() {
         initializeViews()
         setupListeners()
         loadLogs()
+        buttonRefresh.post { buttonRefresh.requestFocus() }
     }
 
     private fun initializeViews() {
@@ -40,62 +43,68 @@ class LogViewerActivity : AppCompatActivity() {
         scrollView = findViewById(R.id.scrollView)
         buttonRefresh = findViewById(R.id.buttonRefresh)
         buttonClear = findViewById(R.id.buttonClear)
+        buttonBack = findViewById(R.id.buttonBack)
         
-        // Set monospace font for better log reading
         textLogs.typeface = android.graphics.Typeface.MONOSPACE
     }
 
     private fun setupListeners() {
+        buttonBack.setOnClickListener { finish() }
         buttonRefresh.setOnClickListener { loadLogs() }
         buttonClear.setOnClickListener { clearLogs() }
+
+        listOf(buttonBack, buttonRefresh, buttonClear).forEach { btn ->
+            btn.setOnFocusChangeListener { v, hasFocus ->
+                if (hasFocus) {
+                    v.animate().scaleX(1.08f).scaleY(1.08f).setDuration(150).start()
+                } else {
+                    v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(150).start()
+                }
+            }
+        }
     }
 
+    private var isLoadingLogs = false
+
     private fun loadLogs() {
+        if (isLoadingLogs) return
+        isLoadingLogs = true
         CoroutineScope(Dispatchers.Main).launch {
-            buttonRefresh.isEnabled = false
-            buttonRefresh.text = "Loading..."
+            buttonRefresh.text = "⏳ ..."
             
             try {
                 val logs = withContext(Dispatchers.IO) {
                     getLogcatOutput()
                 }
-                
                 textLogs.text = logs
-                
-                // Scroll to bottom
-                scrollView.post {
-                    scrollView.fullScroll(ScrollView.FOCUS_DOWN)
-                }
-                
+                scrollView.post { scrollView.fullScroll(ScrollView.FOCUS_DOWN) }
             } catch (e: Exception) {
                 textLogs.text = "Error loading logs: ${e.message}"
             } finally {
-                buttonRefresh.isEnabled = true
-                buttonRefresh.text = "Refresh"
+                isLoadingLogs = false
+                buttonRefresh.text = getString(R.string.btn_refresh)
+                buttonRefresh.requestFocus()
             }
         }
     }
 
     private fun clearLogs() {
         textLogs.text = "Logs cleared. Press Refresh to reload."
-        
-        // Clear logcat buffer (requires root, but we'll try anyway)
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 Runtime.getRuntime().exec("logcat -c")
             } catch (e: Exception) {
-                // Ignore - clearing logcat requires root
+                // Ignore
             }
         }
     }
 
     private fun getLogcatOutput(): String {
         return try {
-            // Get recent logs for our app
             val command = arrayOf(
                 "logcat",
-                "-d",  // dump and exit
-                "-v", "time",  // include timestamps
+                "-d",
+                "-v", "time",
                 "-s", "WolService:*,WolHttpServer:*,WakeOnLan:*,MainActivity:*,BootReceiver:*,System.err:*"
             )
             
@@ -105,7 +114,7 @@ class LogViewerActivity : AppCompatActivity() {
             val logs = StringBuilder()
             var line: String?
             var lineCount = 0
-            val maxLines = 500  // Limit to prevent memory issues
+            val maxLines = 500
             
             while (reader.readLine().also { line = it } != null && lineCount < maxLines) {
                 logs.appendLine(line)
@@ -116,15 +125,12 @@ class LogViewerActivity : AppCompatActivity() {
             process.destroy()
             
             if (logs.isEmpty()) {
-                "No logs found. Make sure the service is running and generating log entries."
+                "No logs recorded yet. Start the service or send a Wake packet to view logs."
             } else {
-                "=== Simple WOL Server Logs (Last $lineCount entries) ===\n\n$logs"
+                "=== Simple WOL Server Logs ($lineCount entries) ===\n\n$logs"
             }
-            
         } catch (e: Exception) {
-            "Error reading logs: ${e.message}\n\n" +
-            "Alternative: Use 'adb logcat' from a computer to view detailed logs:\n" +
-            "adb logcat -s WolService:* WolHttpServer:* WakeOnLan:* MainActivity:* BootReceiver:*"
+            "Error reading logs: ${e.message}\n\nUse 'adb logcat' for live terminal output."
         }
     }
 }

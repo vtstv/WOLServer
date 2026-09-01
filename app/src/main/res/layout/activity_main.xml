@@ -1,365 +1,295 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="#1a1a1a">
+    android:orientation="vertical"
+    android:background="#0A0E17"
+    android:paddingStart="36dp"
+    android:paddingEnd="36dp"
+    android:paddingTop="24dp"
+    android:paddingBottom="24dp">
 
+    <!-- Top Header Bar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="20dp">
 
-        <!-- Header -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="🔥 Simple WOL Server Configuration"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="#ffffff"
-            android:gravity="center"
-            android:layout_marginBottom="24dp" />
-
-        <!-- Service Status -->
+        <!-- App Brand with Real Concept 3 App Icon -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="16dp">
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
+            <ImageView
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:src="@drawable/wol_firetv"
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/app_name"
+                android:layout_marginEnd="14dp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_subtitle"
+                    android:textSize="12sp"
+                    android:textColor="#00E5FF" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <!-- Top Action Buttons -->
+        <Button
+            android:id="@+id/btnHeaderWakeAll"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:text="@string/btn_wake_all"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/bg_btn_wake_selector"
+            android:focusable="true"
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp"
+            android:layout_marginEnd="10dp" />
+
+        <Button
+            android:id="@+id/btnHeaderAddDevice"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:text="@string/btn_add_device"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:background="@drawable/bg_btn_primary_selector"
+            android:focusable="true"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginEnd="10dp" />
+
+        <Button
+            android:id="@+id/btnHeaderScan"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:text="@string/btn_scan"
+            android:textSize="14sp"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/bg_btn_secondary_selector"
+            android:focusable="true"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:layout_marginEnd="10dp" />
+
+        <Button
+            android:id="@+id/btnHeaderSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:text="@string/btn_settings"
+            android:textSize="14sp"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/bg_btn_secondary_selector"
+            android:focusable="true"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginEnd="10dp" />
+
+        <Button
+            android:id="@+id/btnHeaderLogs"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:text="@string/btn_logs"
+            android:textSize="14sp"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/bg_btn_secondary_selector"
+            android:focusable="true"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginEnd="10dp" />
+
+        <Button
+            android:id="@+id/btnHeaderAbout"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:text="@string/btn_about"
+            android:textSize="14sp"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/bg_btn_secondary_selector"
+            android:focusable="true"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp" />
+
+    </LinearLayout>
+
+    <!-- Main Content Area (2-Column Landscape Split) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <!-- Left Column: Devices List (65% width) -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="65"
+            android:orientation="vertical"
+            android:layout_marginEnd="18dp">
+
+            <!-- Devices Header -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="10dp">
 
                 <TextView
-                    android:id="@+id/textServiceStatus"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="🔴 Service Stopped"
-                    android:textSize="16sp"
-                    android:textColor="#ffffff" />
-
-                <Button
-                    android:id="@+id/buttonServiceControl"
+                    android:id="@+id/textDevicesHeader"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Start Service"
-                    android:backgroundTint="#007acc" />
+                    android:text="Target Devices (0)"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF" />
 
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/hint_dpad_browse"
+                    android:textSize="12sp"
+                    android:textColor="#64748B" />
             </LinearLayout>
+
+            <!-- Devices RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerDevices"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:clipToPadding="false"
+                android:focusable="true"
+                android:descendantFocusability="afterDescendants" />
+
+            <!-- Remote Navigation Hint -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/hint_footer_remote"
+                android:textSize="12sp"
+                android:textColor="#94A3B8"
+                android:layout_marginTop="8dp" />
+
+        </LinearLayout>
+
+        <!-- Right Column: Server Status & Control (35% width) -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="35"
+            android:orientation="vertical"
+            android:background="@drawable/bg_server_card"
+            android:padding="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/daemon_status_title"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Service Status Pill -->
+            <TextView
+                android:id="@+id/textServiceStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/service_running"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#00E676"
+                android:background="@drawable/bg_status_badge"
+                android:layout_marginBottom="14dp" />
+
+            <!-- Server IP Address Box -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/web_endpoint_label"
+                android:textSize="12sp"
+                android:textColor="#94A3B8"
+                android:layout_marginBottom="4dp" />
 
             <TextView
                 android:id="@+id/textServerAddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Server: Not running"
+                android:text="http://192.168.0.51:8085"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:textColor="#00E5FF"
+                android:typeface="monospace"
+                android:background="@drawable/bg_edit_text_selector"
+                android:padding="10dp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Service Control Button -->
+            <Button
+                android:id="@+id/btnToggleService"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:text="@string/btn_stop_service"
                 android:textSize="14sp"
-                android:textColor="#cccccc"
-                android:layout_marginTop="4dp" />
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/bg_btn_primary_selector"
+                android:focusable="true"
+                android:layout_marginBottom="14dp" />
 
-        </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
-        <!-- Web Password -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Web Interface Password"
-            android:textColor="#ffffff"
-            android:textSize="14sp"
-            android:layout_marginTop="16dp" />
-
-        <EditText
-            android:id="@+id/editWebPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="admin123"
-            android:textColor="#ffffff"
-            android:textColorHint="#888888"
-            android:backgroundTint="#555555"
-            android:inputType="textPassword" />
-
-        <!-- Authentication Token -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="API Authentication Token"
-            android:textColor="#ffffff"
-            android:textSize="14sp"
-            android:layout_marginTop="16dp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/editAuthToken"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="Enter API authentication token"
-                android:textColor="#ffffff"
-                android:textColorHint="#888888"
-                android:backgroundTint="#555555"
-                android:inputType="textPassword" />
-
-            <Button
-                android:id="@+id/buttonShowToken"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="👁️ Show"
-                android:layout_marginStart="4dp"
-                android:backgroundTint="#6c757d" />
-
-            <Button
-                android:id="@+id/buttonGenerateToken"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="🎲 Generate"
-                android:layout_marginStart="4dp"
-                android:backgroundTint="#28a745" />
-
-        </LinearLayout>
-
-        <!-- MAC Address -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Target PC MAC Address"
-            android:textColor="#ffffff"
-            android:textSize="14sp"
-            android:layout_marginTop="16dp" />
-
-        <EditText
-            android:id="@+id/editMacAddress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="AA:BB:CC:DD:EE:FF"
-            android:textColor="#ffffff"
-            android:textColorHint="#888888"
-            android:backgroundTint="#555555"
-            android:inputType="text" />
-
-        <!-- Broadcast Address -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Broadcast Address"
-            android:textColor="#ffffff"
-            android:textSize="14sp"
-            android:layout_marginTop="16dp" />
-
-        <EditText
-            android:id="@+id/editBroadcastAddress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="255.255.255.255"
-            android:textColor="#ffffff"
-            android:textColorHint="#888888"
-            android:backgroundTint="#555555"
-            android:inputType="text" />
-
-        <!-- Ports -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="16dp">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_marginEnd="8dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="WOL Port"
-                    android:textColor="#ffffff"
-                    android:textSize="14sp" />
-
-                <EditText
-                    android:id="@+id/editWolPort"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="9"
-                    android:textColor="#ffffff"
-                    android:textColorHint="#888888"
-                    android:backgroundTint="#555555"
-                    android:inputType="number" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_marginStart="8dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="HTTP Port"
-                    android:textColor="#ffffff"
-                    android:textSize="14sp" />
-
-                <EditText
-                    android:id="@+id/editHttpPort"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="8085"
-                    android:textColor="#ffffff"
-                    android:textColorHint="#888888"
-                    android:backgroundTint="#555555"
-                    android:inputType="number" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <!-- IP Allowlist -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="IP Allowlist (CIDR, comma-separated)"
-            android:textColor="#ffffff"
-            android:textSize="14sp"
-            android:layout_marginTop="16dp" />
-
-        <EditText
-            android:id="@+id/editIpAllowlist"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="192.168.1.0/24, 10.0.0.0/8 (leave empty to allow all)"
-            android:textColor="#ffffff"
-            android:textColorHint="#888888"
-            android:backgroundTint="#555555"
-            android:inputType="text" />
-
-        <!-- Switches -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="16dp">
-
-            <LinearLayout
+            <!-- Helper Box -->
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Enable HTTPS"
-                    android:textColor="#ffffff"
-                    android:textSize="16sp" />
-
-                <Switch
-                    android:id="@+id/switchHttps"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Auto-start on Boot"
-                    android:textColor="#ffffff"
-                    android:textSize="16sp" />
-
-                <Switch
-                    android:id="@+id/switchAutoStart"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
-
-            <!-- Authentication Required -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="🔐 Require API Authentication"
-                    android:textColor="#ffffff"
-                    android:textSize="16sp" />
-
-                <Switch
-                    android:id="@+id/switchRequireAuth"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
+                android:text="@string/footer_instructions"
+                android:textSize="12sp"
+                android:textColor="#64748B"
+                android:lineSpacingMultiplier="1.2" />
 
         </LinearLayout>
-
-        <!-- Action Buttons -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="24dp">
-
-            <Button
-                android:id="@+id/buttonSave"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="💾 Save Config"
-                android:backgroundTint="#28a745"
-                android:layout_marginEnd="4dp" />
-
-            <Button
-                android:id="@+id/buttonTestWake"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="💤 Test Wake"
-                android:backgroundTint="#ffc107"
-                android:layout_marginStart="4dp" />
-
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/buttonViewLogs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="📋 View Logs"
-            android:backgroundTint="#6c757d"
-            android:layout_marginTop="8dp" />
-
-        <!-- Instructions -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="💡 Instructions:\n1. Set web password and API token\n2. Enter your PC's MAC address\n3. Save configuration and start service\n4. Access web interface at http://SERVER_IP:8085\n\nSimple WOL Server v1.0.5\n© 2025 Murr | github.com/vtstv/WOLServer"
-            android:textColor="#cccccc"
-            android:textSize="12sp"
-            android:layout_marginTop="24dp"
-            android:padding="12dp"
-            android:background="#2d2d2d" />
 
     </LinearLayout>
 
-</ScrollView>
+</LinearLayout>

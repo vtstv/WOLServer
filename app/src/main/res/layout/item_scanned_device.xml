@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:focusable="true"
+    android:clickable="true"
+    android:background="@drawable/bg_tv_card_selector"
+    android:padding="12dp"
+    android:layout_marginBottom="8dp">
+
+    <TextView
+        android:id="@+id/textScannedIcon"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:text="🖥️"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:background="@drawable/bg_btn_secondary_selector"
+        android:layout_marginEnd="12dp"
+        android:focusable="false" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textScannedHostname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gaming PC"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="2dp">
+
+            <TextView
+                android:id="@+id/textScannedIp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="192.168.0.100"
+                android:textSize="12sp"
+                android:textColor="#94A3B8"
+                android:typeface="monospace"
+                android:layout_marginEnd="12dp" />
+
+            <TextView
+                android:id="@+id/textScannedMac"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AA:BB:CC:DD:EE:FF"
+                android:textSize="12sp"
+                android:textColor="#00E5FF"
+                android:typeface="monospace" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnScannedAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="38dp"
+        android:text="+ ADD"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:background="@drawable/bg_btn_primary_selector"
+        android:focusable="true"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp" />
+
+</LinearLayout>

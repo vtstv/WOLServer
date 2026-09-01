@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#151B2B"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/dialogTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_add_device_title"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#00E5FF"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Device Name -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_device_name"
+            android:textSize="14sp"
+            android:textColor="#94A3B8"
+            android:layout_marginBottom="4dp" />
+
+        <EditText
+            android:id="@+id/inputDeviceName"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="@string/hint_device_name"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#64748B"
+            android:textSize="15sp"
+            android:padding="10dp"
+            android:background="@drawable/bg_edit_text_selector"
+            android:focusable="true"
+            android:layout_marginBottom="14dp" />
+
+        <!-- MAC Address -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_mac_address"
+            android:textSize="14sp"
+            android:textColor="#94A3B8"
+            android:layout_marginBottom="4dp" />
+
+        <EditText
+            android:id="@+id/inputDeviceMac"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="@string/hint_mac_address"
+            android:textColor="#00E5FF"
+            android:textColorHint="#64748B"
+            android:textSize="15sp"
+            android:typeface="monospace"
+            android:padding="10dp"
+            android:background="@drawable/bg_edit_text_selector"
+            android:focusable="true"
+            android:inputType="textCapCharacters"
+            android:layout_marginBottom="14dp" />
+
+        <!-- Target IP Address (Optional for Ping) -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_target_ip"
+            android:textSize="14sp"
+            android:textColor="#94A3B8"
+            android:layout_marginBottom="4dp" />
+
+        <EditText
+            android:id="@+id/inputDeviceIp"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="@string/hint_target_ip"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#64748B"
+            android:textSize="15sp"
+            android:typeface="monospace"
+            android:padding="10dp"
+            android:background="@drawable/bg_edit_text_selector"
+            android:focusable="true"
+            android:layout_marginBottom="14dp" />
+
+        <!-- Device Icon Type -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_device_type"
+            android:textSize="14sp"
+            android:textColor="#94A3B8"
+            android:layout_marginBottom="4dp" />
+
+        <Spinner
+            android:id="@+id/spinnerDeviceIcon"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_btn_secondary_selector"
+            android:focusable="true"
+            android:layout_marginBottom="14dp" />
+
+        <!-- Broadcast & Port -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:orientation="vertical"
+                android:layout_marginEnd="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_broadcast_ip"
+                    android:textSize="14sp"
+                    android:textColor="#94A3B8"
+                    android:layout_marginBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/inputDeviceBroadcast"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:text="255.255.255.255"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#64748B"
+                    android:textSize="14sp"
+                    android:padding="10dp"
+                    android:background="@drawable/bg_edit_text_selector"
+                    android:focusable="true" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_wol_port"
+                    android:textSize="14sp"
+                    android:textColor="#94A3B8"
+                    android:layout_marginBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/inputDevicePort"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:text="9"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#64748B"
+                    android:textSize="14sp"
+                    android:inputType="number"
+                    android:padding="10dp"
+                    android:background="@drawable/bg_edit_text_selector"
+                    android:focusable="true" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Dialog Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <Button
+                android:id="@+id/btnCancelDialog"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:text="@string/btn_cancel"
+                android:textColor="#94A3B8"
+                android:background="@drawable/bg_btn_secondary_selector"
+                android:focusable="true"
+                android:layout_marginEnd="10dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp" />
+
+            <Button
+                android:id="@+id/btnSaveDialog"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:text="@string/btn_save_device"
+                android:textColor="#000000"
+                android:textStyle="bold"
+                android:background="@drawable/bg_btn_primary_selector"
+                android:focusable="true"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

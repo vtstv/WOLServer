@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Simple WOL Server</string>
+    <string name="app_subtitle">Fire TV / Android TV Edition</string>
+    <string name="service_description">Wake-on-LAN Hintergrunddienst</string>
+    <string name="notification_title">Simple WOL Server</string>
+    <string name="notification_text">HTTP-Server läuft auf Port %1$d</string>
+
+    <!-- Top Header & Navigation -->
+    <string name="btn_wake_all">⚡ Alle Wecken</string>
+    <string name="btn_add_device">➕ Hinzufügen</string>
+    <string name="btn_language">🌐 Deutsch</string>
+    <string name="btn_settings">⚙️ Einstellungen</string>
+    <string name="btn_logs">📋 Protokolle</string>
+    <string name="btn_about">ℹ️ Über</string>
+
+    <string name="dialog_language_title">Sprache Auswählen / Select Language</string>
+    <string name="label_language">🌐 Sprache der Benutzeroberfläche</string>
+    <string name="lang_english">English</string>
+    <string name="lang_deutsch">Deutsch</string>
+    <string name="lang_russian">Русский</string>
+    <string name="toast_language_changed">Sprache geändert auf %1$s</string>
+    <string name="toast_token_copied">Token in die Zwischenablage kopiert</string>
+
+    <!-- Status Card -->
+    <string name="daemon_status_title">📡 Server Daemon Status</string>
+    <string name="service_running">🟢 Dienst Läuft</string>
+    <string name="service_stopped">🔴 Dienst Gestoppt</string>
+    <string name="web_endpoint_label">Web-Steuerung &amp; API-Endpunkt:</string>
+    <string name="btn_stop_service">DIENST STOPPEN</string>
+    <string name="btn_start_service">DIENST STARTEN</string>
+    <string name="footer_instructions">Öffnen Sie den Link im Browser auf Ihrem Smartphone oder PC, um das Web-Dashboard zu öffnen oder die API mit Home Assistant zu nutzen.</string>
+
+    <!-- Devices List -->
+    <string name="target_devices_header">Zielgeräte (%1$d)</string>
+    <string name="hint_dpad_browse">Mit Fernbedienungs-D-Pad ◀▶ navigieren</string>
+    <string name="add_device_card_title">Gerät Hinzufügen</string>
+    <string name="add_device_card_sub">WoL-Ziel Konfigurieren</string>
+    <string name="btn_wake">⚡ WECKEN</string>
+    <string name="hint_footer_remote">💡 [Auswählen] zum Wecken | [Bearbeiten] für MAC | [Löschen] zum Entfernen</string>
+
+    <!-- Add/Edit Device Dialog -->
+    <string name="dialog_add_device_title">+ WoL-Zielgerät Hinzufügen</string>
+    <string name="dialog_edit_device_title">WoL-Zielgerät Bearbeiten</string>
+    <string name="label_device_name">Gerätename</string>
+    <string name="hint_device_name">Gaming-PC / Server</string>
+    <string name="label_mac_address">Ziel-MAC-Adresse</string>
+    <string name="hint_mac_address">AA : BB : CC : DD : EE : FF</string>
+    <string name="label_device_type">Gerätetyp / Symbol</string>
+    <string name="label_broadcast_ip">Broadcast-IP</string>
+    <string name="label_wol_port">WoL-Port</string>
+    <string name="btn_cancel">ABBRECHEN</string>
+    <string name="btn_save_device">SPEICHERN</string>
+    <string name="btn_delete">LÖSCHEN</string>
+
+    <!-- Device Types -->
+    <string name="device_type_desktop">🖥️ Desktop-PC</string>
+    <string name="device_type_server">🗄️ Heimserver / NAS</string>
+    <string name="device_type_laptop">💻 Laptop</string>
+    <string name="device_type_console">🎮 Spielkonsole</string>
+    <string name="device_type_tv">📺 Smart-TV</string>
+
+    <!-- Settings Dialog -->
+    <string name="dialog_settings_title">⚙️ Server- &amp; Sicherheitseinstellungen</string>
+    <string name="label_web_password">Web-Dashboard Passwort</string>
+    <string name="label_api_token">API-Authentifizierungstoken</string>
+    <string name="btn_token_new">🎲 NEU</string>
+    <string name="label_http_port">Integrierter HTTP-Server Port</string>
+    <string name="label_require_auth">Token für /wake Endpunkt erforderlich</string>
+    <string name="label_auto_start">Server beim Gerätestart ausführen</string>
+    <string name="label_app_language">App-Sprache / Language / Язык</string>
+    <string name="btn_save_apply">SPEICHERN &amp; ANWENDEN</string>
+
+    <!-- About Dialog -->
+    <string name="about_version">Version 2.0.0 (Fire TV Edition)</string>
+    <string name="about_description">Leistungsstarker Wake-on-LAN-Daemon &amp; Multi-Geräte-Hub für Amazon Fire TV und Android TV.</string>
+    <string name="about_created_by">Erstellt mit ❤️ von</string>
+    <string name="about_copyright">Copyright © 2025-2026 Murr. Alle Rechte vorbehalten.</string>
+    <string name="btn_close">SCHLIESSEN</string>
+
+    <!-- Logs Activity -->
+    <string name="logs_activity_title">📋 Dienst- &amp; Netzwerkprotokolle</string>
+    <string name="btn_back">◀ ZURÜCK</string>
+    <string name="btn_refresh">AKTUALISIEREN</string>
+    <string name="btn_clear">🗑️ LEEREN</string>
+    <string name="logs_debug_tip">💡 Debugging-Tipp: Nutzen Sie \'adb logcat -s WolService:* WolHttpServer:* WakeOnLan:*\' im PC-Terminal</string>
+
+    <!-- Toasts & Notifications -->
+    <string name="toast_no_devices">Keine Geräte konfiguriert. Klicken Sie zuerst auf [Gerät Hinzufügen].</string>
+    <string name="toast_waking_device">Magic Packet wird an %1$s gesendet...</string>
+    <string name="toast_woken_device">⚡ Magic Packet an %1$s gesendet!</string>
+    <string name="toast_woken_all">⚡ Magic Packets an alle %1$d Geräte gesendet!</string>
+    <string name="toast_device_saved">Gerät \"%1$s\" erfolgreich gespeichert!</string>
+    <string name="toast_device_deleted">Gerät \"%1$s\" gelöscht.</string>
+    <string name="toast_settings_saved">Einstellungen erfolgreich angewendet!</string>
+    <string name="toast_invalid_mac">Ungültige MAC-Adresse! Format: AA:BB:CC:DD:EE:FF</string>
+    <string name="toast_empty_fields">Bitte Gerätename und MAC-Adresse eingeben</string>
+    <string name="toast_invalid_port">Port muss zwischen 1 und 65535 liegen</string>
+    <string name="dialog_delete_confirm_title">Gerät löschen?</string>
+    <string name="dialog_delete_confirm_msg">Möchten Sie \"%1$s\" (%2$s) wirklich entfernen?</string>
+    <string name="dialog_btn_cancel">SCHLIESSEN</string>
+
+    <!-- Scanner & Status Pro Strings -->
+    <string name="btn_scan">🔍 Scannen</string>
+    <string name="status_online">🟢 Online (%1$dms)</string>
+    <string name="status_offline">⚪ Offline</string>
+    <string name="scan_title">🔍 LAN-Netzwerk Scanner</string>
+    <string name="scan_prompt">Drücken Sie [SUBMETZ SCANNEN], um aktive Computer &amp; Server im Netzwerk zu finden.</string>
+    <string name="scan_scanning">Lokales Subnetz wird nach aktiven Geräten durchsucht...</string>
+    <string name="scan_now">SUBNETZ SCANNEN</string>
+    <string name="scan_empty">Keine aktiven Geräte im lokalen ARP-Cache gefunden.</string>
+    <string name="label_target_ip">Ziel-IP-Adresse (Optional für Ping)</string>
+    <string name="hint_target_ip">192.168.0.100</string>
+</resources>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="260dp"
+    android:layout_height="230dp"
+    android:orientation="vertical"
+    android:focusable="true"
+    android:clickable="true"
+    android:background="@drawable/bg_tv_card_selector"
+    android:padding="16dp"
+    android:layout_margin="8dp">
+
+    <!-- Card Header: Icon & Action buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:id="@+id/textDeviceIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="🖥️"
+            android:textSize="22sp"
+            android:gravity="center"
+            android:background="@drawable/bg_btn_secondary_selector"
+            android:focusable="false" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/btnEditDevice"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:text="✏️"
+            android:textSize="14sp"
+            android:textColor="#FFFFFF"
+            android:padding="0dp"
+            android:focusable="true"
+            android:background="@drawable/bg_btn_secondary_selector"
+            android:layout_marginEnd="6dp" />
+
+        <Button
+            android:id="@+id/btnDeleteDevice"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:text="🗑️"
+            android:textSize="14sp"
+            android:textColor="#FF5252"
+            android:padding="0dp"
+            android:focusable="true"
+            android:background="@drawable/bg_btn_secondary_selector" />
+
+    </LinearLayout>
+
+    <!-- Status Badge -->
+    <TextView
+        android:id="@+id/textDeviceStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="⚪ Offline"
+        android:textSize="11sp"
+        android:textColor="#94A3B8"
+        android:textStyle="bold"
+        android:background="@drawable/bg_status_badge"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:layout_marginBottom="6dp" />
+
+    <!-- Device Name -->
+    <TextView
+        android:id="@+id/textDeviceName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Gaming PC"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:layout_marginBottom="4dp" />
+
+    <!-- MAC Address -->
+    <TextView
+        android:id="@+id/textDeviceMac"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="18:31:BF:6E:D5:BB"
+        android:textSize="13sp"
+        android:textColor="#00E5FF"
+        android:typeface="monospace"
+        android:layout_marginBottom="2dp" />
+
+    <!-- Target Broadcast & Port -->
+    <TextView
+        android:id="@+id/textDeviceBroadcast"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="255.255.255.255:9"
+        android:textSize="11sp"
+        android:textColor="#64748B"
+        android:typeface="monospace" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- Wake Action Button -->
+    <Button
+        android:id="@+id/btnWakeDevice"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:text="@string/btn_wake"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:focusable="true"
+        android:background="@drawable/bg_btn_wake_selector" />
+
+</LinearLayout>
