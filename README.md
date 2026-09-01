@@ -1,16 +1,45 @@
-# Simple WOL Server
+# Simple WOL Server (Fire TV / Android TV Edition)
 
-Lightweight Wake-on-LAN (WoL) daemon, multi-device management hub, and embedded REST API server designed for Amazon Fire TV, Android TV, and Android smart displays.
+[![Release](https://img.shields.io/badge/Release-v2.0.0--Pro-brightgreen.svg)](https://github.com/vtstv/WOLServer/releases)
+[![Platform](https://img.shields.io/badge/Platform-Fire%20TV%20%7C%20Android%20TV-orange.svg)](https://developer.amazon.com/appstore)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.0-purple.svg)](https://kotlinlang.org)
 
-The application operates as an uninterrupted foreground service hosting an embedded HTTP server (NanoHTTPD), enabling users to wake PCs, servers, NAS units, and consoles via remote D-pad, local web browser, or home automation platforms (Home Assistant, Apple Shortcuts, Node-RED).
+Lightweight Wake-on-LAN (WoL) daemon, multi-device management hub, and embedded REST API server engineered specifically for **Amazon Fire TV**, **Android TV**, and Android-based smart displays.
+
+It operates as an uninterrupted foreground service hosting an embedded **NanoHTTPD** HTTP server and a modern glassmorphic web control dashboard, enabling users to wake PCs, servers, NAS units, and consoles via remote D-pad, web browser, or home automation platforms (*Home Assistant*, *Apple Shortcuts*, *Node-RED*).
 
 ---
 
-## Key Features
+## 📸 Screenshots & User Interface
+
+### 📺 Fire TV & Android TV 10-Foot Experience
+Intuitive TV remote D-pad navigation, high-contrast dark theme, live ICMP/TCP ping status indicators, and one-click Wake action:
+
+![Fire TV Main Interface](docs/images/firetv_main.png)
+
+---
+
+### 🌐 Embedded Web Control Dashboard
+Accessible directly in any browser on your phone, tablet, or PC via local network (`http://<DEVICE_IP>:8085`):
+
+![Web Control Dashboard](docs/images/web_dashboard.png)
+
+---
+
+### ⚙️ TV Settings, Auto-Scan & Diagnostics
+
+| 2-Column TV Settings Modal | LAN Subnet Scanner & Auto-Discovery |
+| :---: | :---: |
+| ![TV Settings Modal](docs/images/server_settings.png) | ![LAN Subnet Scanner](docs/images/network_scanner.png) |
+
+---
+
+## ✨ Key Features
 
 - **Multi-Device Wake-on-LAN**: Manage multiple target devices with custom names, MAC addresses, broadcast addresses, UDP ports (7/9), and device categories (Desktop, Server, Laptop, Console, TV).
 - **10-Foot Leanback UI**: Fully optimized for TV remote D-pad navigation with distinct focus states, safe overscan margins, and dark mode palette.
-- **Embedded Web Dashboard**: Modern responsive web control panel for desktop and mobile browsers on the local network.
+- **Embedded Web Dashboard**: Modern responsive glassmorphic web control panel for desktop and mobile browsers on the local network.
 - **Live Device Status Prober**: Dual-mode availability checking utilizing ICMP ping with automatic fallback to TCP socket probes (ports 3389, 22, 445, 80, 8080) for Windows hosts that drop ICMP.
 - **LAN Subnet Scanner**: Discovers active devices, IP addresses, and hardware MAC addresses on the local network via kernel ARP table parsing.
 - **Autonomous Auto-Wake Scheduler**: Background timer evaluating custom wake schedules by day-of-week, hour, and minute with duplicate execution prevention.
@@ -21,7 +50,7 @@ The application operates as an uninterrupted foreground service hosting an embed
 
 ---
 
-## Installation
+## 📥 Installation
 
 ### Requirements
 - Amazon Fire TV (Fire OS 5+) or Android TV (Android 5.1 / API 22 or higher).
@@ -33,7 +62,7 @@ The application operates as an uninterrupted foreground service hosting an embed
 adb connect <DEVICE_IP>:5555
 
 # Install the release APK
-adb -s <DEVICE_IP>:5555 install -r WOLFireTV-v2.0.0-release.apk
+adb -s <DEVICE_IP>:5555 install -r SimpleWOLServer-v2.0.0-release.apk
 
 # Launch the application
 adb -s <DEVICE_IP>:5555 shell am start -n com.vtstv.wolserver/.MainActivity
@@ -41,7 +70,7 @@ adb -s <DEVICE_IP>:5555 shell am start -n com.vtstv.wolserver/.MainActivity
 
 ---
 
-## REST API Reference
+## 🌐 REST API Reference
 
 The embedded HTTP server listens on port `8085` by default (`http://<DEVICE_IP>:8085`).
 
@@ -73,35 +102,7 @@ When authentication is enabled (`requireAuthentication: true`), API requests mus
 
 ---
 
-## API Usage Examples
-
-### Wake a Specific Device by ID
-```bash
-curl -X POST "http://192.168.0.51:8085/wake?id=3f53730d-37ee-4dfe-a37d-bb4645244b39" \
-  -H "Authorization: Bearer YOUR_AUTH_TOKEN"
-```
-
-### Wake a Device by MAC Address
-```bash
-curl -X POST "http://192.168.0.51:8085/wake?mac=18:31:BF:6E:D5:BB" \
-  -H "Authorization: Bearer YOUR_AUTH_TOKEN"
-```
-
-### Wake All Configured Devices
-```bash
-curl -X POST "http://192.168.0.51:8085/wake" \
-  -H "Authorization: Bearer YOUR_AUTH_TOKEN"
-```
-
-### Check Device Online Status
-```bash
-curl "http://192.168.0.51:8085/api/devices/status" \
-  -H "Authorization: Bearer YOUR_AUTH_TOKEN"
-```
-
----
-
-## Home Automation Integrations
+## 💡 Home Automation Integrations
 
 ### Home Assistant (`configuration.yaml`)
 
@@ -148,7 +149,7 @@ print(response.json())
 
 ---
 
-## Building from Source
+## 🛠️ Building from Source
 
 ### Prerequisites
 - JDK 17
@@ -172,8 +173,8 @@ cd WOLFireTV
 
 ---
 
-## Author & License
+## 📄 License & Author
 
 - **Author**: Murr ([https://github.com/vtstv](https://github.com/vtstv))
-- **Repository**: [https://github.com/vtstv/wolserver](https://github.com/vtstv/wolserver)
+- **Repository**: [https://github.com/vtstv/WOLServer](https://github.com/vtstv/WOLServer)
 - **License**: MIT License
