@@ -23,6 +23,12 @@ import subprocess
 import urllib.request
 import urllib.parse
 
+try:
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(encoding='utf-8')
+except Exception:
+    pass
+
 CREDENTIALS_FILE = os.path.join(os.path.dirname(__file__), "..", "secrets", "amazon_credentials.json")
 DEFAULT_APK_PATH = os.path.join(os.path.dirname(__file__), "..", "app", "build", "outputs", "apk", "release", "app-release.apk")
 METADATA_DIR = os.path.join(os.path.dirname(__file__), "..", "store_metadata")
@@ -78,7 +84,7 @@ def build_release_apk():
     if result.returncode != 0:
         print("[X] Gradle build failed!")
         sys.exit(1)
-    print("[✓] Build successful!")
+    print("[+] Build successful!")
 
 
 def get_lwa_access_token(client_id, client_secret):
@@ -103,7 +109,7 @@ def get_lwa_access_token(client_id, client_secret):
             if not token:
                 print(f"[X] Failed to obtain access token: {body}")
                 sys.exit(1)
-            print("[✓] LWA Authentication successful.")
+            print("[+] LWA Authentication successful.")
             return token
     except urllib.error.HTTPError as e:
         print(f"[X] LWA Authentication error ({e.code}): {e.read().decode('utf-8', 'ignore')}")
@@ -125,7 +131,7 @@ def get_or_create_edit(app_id, token):
             body = json.loads(resp.read().decode("utf-8"))
             edit_id = body.get("id")
             if edit_id:
-                print(f"[✓] Found existing edit draft: {edit_id}")
+                print(f"[+] Found existing edit draft: {edit_id}")
                 return edit_id
     except urllib.error.HTTPError as e:
         if e.code != 404:
@@ -137,7 +143,7 @@ def get_or_create_edit(app_id, token):
         with urllib.request.urlopen(req, timeout=15) as resp:
             body = json.loads(resp.read().decode("utf-8"))
             edit_id = body.get("id")
-            print(f"[✓] Created new edit draft: {edit_id}")
+            print(f"[+] Created new edit draft: {edit_id}")
             return edit_id
     except urllib.error.HTTPError as e:
         print(f"[X] Failed to create edit ({e.code}): {e.read().decode('utf-8', 'ignore')}")
@@ -171,11 +177,15 @@ def upload_apk(app_id, edit_id, apk_path, token):
     try:
         with urllib.request.urlopen(req, timeout=180) as resp:
             body = json.loads(resp.read().decode("utf-8"))
-            print("[✓] APK uploaded successfully!")
+            print("[+] APK uploaded successfully!")
             print(f"    APK ID: {body.get('id', 'N/A')}")
             return body
     except urllib.error.HTTPError as e:
-        print(f"[X] APK upload failed ({e.code}): {e.read().decode('utf-8', 'ignore')}")
+        err_text = e.read().decode('utf-8', 'ignore')
+        if "error_apk_version_code_conflict" in err_text:
+            print("[+] APK with this version code is already attached to the draft. Proceeding...")
+            return None
+        print(f"[X] APK upload failed ({e.code}): {err_text}")
         sys.exit(1)
 
 
@@ -230,7 +240,7 @@ def sync_store_metadata(app_id, edit_id, token):
             )
 
             with urllib.request.urlopen(req, timeout=15) as resp:
-                print(f"[✓] Store listing updated for {locale_code} (Title: {meta_json.get('title')})")
+                print(f"[+] Store listing updated for {locale_code} (Title: {meta_json.get('title')})")
         except urllib.error.HTTPError as e:
             print(f"[!] Warning: Could not update {locale_code} listing ({e.code}): {e.read().decode('utf-8', 'ignore')}")
         except Exception as e:
@@ -269,7 +279,7 @@ def publish_edit(app_id, edit_id, token):
 
     try:
         with urllib.request.urlopen(req, timeout=30) as resp:
-            print("[✓] Edit submitted successfully for publishing to Amazon Appstore!")
+            print("[+] Edit submitted successfully for publishing to Amazon Appstore!")
     except urllib.error.HTTPError as e:
         print(f"[!] Note on auto-commit ({e.code}): {e.read().decode('utf-8', 'ignore')}")
         print("    APK and listings are saved in your draft. Click 'Submit App' in Developer Console to complete.")
