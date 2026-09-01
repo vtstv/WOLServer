@@ -28,7 +28,7 @@ DEFAULT_APK_PATH = os.path.join(os.path.dirname(__file__), "..", "app", "build",
 METADATA_DIR = os.path.join(os.path.dirname(__file__), "..", "store_metadata")
 
 LWA_TOKEN_URL = "https://api.amazon.com/auth/o2/token"
-AMAZON_API_BASE = "https://developer.amazon.com/api-appstore/v1"
+AMAZON_API_BASE = "https://developer.amazon.com/api/appstore/v1"
 
 
 def load_credentials():
