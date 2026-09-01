@@ -30,11 +30,19 @@ except Exception:
     pass
 
 CREDENTIALS_FILE = os.path.join(os.path.dirname(__file__), "..", "secrets", "amazon_credentials.json")
-DEFAULT_APK_PATH = os.path.join(os.path.dirname(__file__), "..", "app", "build", "outputs", "apk", "release", "app-release.apk")
+RELEASE_APK_DIR = os.path.join(os.path.dirname(__file__), "..", "app", "build", "outputs", "apk", "release")
 METADATA_DIR = os.path.join(os.path.dirname(__file__), "..", "store_metadata")
 
 LWA_TOKEN_URL = "https://api.amazon.com/auth/o2/token"
 AMAZON_API_BASE = "https://developer.amazon.com/api/appstore/v1"
+
+
+def find_release_apk():
+    if os.path.exists(RELEASE_APK_DIR):
+        for f in os.listdir(RELEASE_APK_DIR):
+            if f.endswith(".apk") and not f.endswith("-unsigned.apk"):
+                return os.path.join(RELEASE_APK_DIR, f)
+    return os.path.join(RELEASE_APK_DIR, "SimpleWOLServer-v2.0.0-release.apk")
 
 
 def load_credentials():
@@ -290,17 +298,22 @@ def main():
     parser.add_argument("--build", action="store_true", help="Build release APK before uploading")
     parser.add_argument("--sync-metadata", action="store_true", default=True, help="Update multilingual store listings")
     parser.add_argument("--publish", action="store_true", help="Automatically submit app for review/publication after upload")
-    parser.add_argument("--apk", type=str, default=DEFAULT_APK_PATH, help="Path to APK file to upload")
+    parser.add_argument("--apk", type=str, default=None, help="Path to APK file to upload")
     args = parser.parse_args()
 
     client_id, client_secret, app_id = load_credentials()
 
-    if args.build or not os.path.exists(args.apk):
+    if args.build:
         build_release_apk()
+
+    apk_path = args.apk or find_release_apk()
+    if not os.path.exists(apk_path):
+        build_release_apk()
+        apk_path = find_release_apk()
 
     token = get_lwa_access_token(client_id, client_secret)
     edit_id = get_or_create_edit(app_id, token)
-    upload_apk(app_id, edit_id, args.apk, token)
+    upload_apk(app_id, edit_id, apk_path, token)
 
     if args.sync_metadata:
         sync_store_metadata(app_id, edit_id, token)

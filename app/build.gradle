@@ -77,6 +77,12 @@ android {
     testOptions {
         unitTests.returnDefaultValues = true
     }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "SimpleWOLServer-v${variant.versionName}-${variant.buildType.name}.apk"
+        }
+    }
 }
 
 dependencies {
