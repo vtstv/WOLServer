@@ -1,0 +1,36 @@
+name: Deploy to Amazon Appstore
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build Release APK
+        run: ./gradlew assembleRelease
+
+      - name: Deploy to Amazon Appstore
+        uses: galonga/upload-amazon-appstore@v1.0.4
+        with:
+          clientId: ${{ secrets.AMAZON_APPSTORE_CLIENT_ID }}
+          clientSecret: ${{ secrets.AMAZON_APPSTORE_CLIENT_SECRET }}
+          appId: ${{ secrets.AMAZON_APPSTORE_APP_ID }}
+          releaseFile: app/build/outputs/apk/release/app-release.apk
