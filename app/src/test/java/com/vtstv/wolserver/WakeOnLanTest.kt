@@ -1,3 +1,7 @@
+﻿/**
+ * Copyright (c) 2025-2026 Murr
+ * https://github.com/vtstv/wolserver
+ */
 package com.vtstv.wolserver
 
 import com.vtstv.wolserver.core.engine.WakeOnLan

@@ -1,3 +1,7 @@
+﻿/**
+ * Copyright (c) 2025-2026 Murr
+ * https://github.com/vtstv/wolserver
+ */
 package com.vtstv.wolserver.ui.util
 
 import android.content.Context
