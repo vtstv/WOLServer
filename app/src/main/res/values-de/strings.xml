@@ -69,6 +69,7 @@
     <string name="label_require_auth">Token für /wake Endpunkt erforderlich</string>
     <string name="label_auto_start">Server beim Gerätestart ausführen</string>
     <string name="label_app_language">App-Sprache / Language / Язык</string>
+    <string name="label_diagnostics_info">Werkzeuge &amp; Diagnose</string>
     <string name="btn_save_apply">SPEICHERN &amp; ANWENDEN</string>
 
     <!-- About Dialog -->

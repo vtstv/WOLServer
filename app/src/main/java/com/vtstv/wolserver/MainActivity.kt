@@ -50,11 +50,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var textServerAddress: TextView
     private lateinit var btnToggleService: Button
     private lateinit var btnHeaderWakeAll: Button
-    private lateinit var btnHeaderAddDevice: Button
     private lateinit var btnHeaderScan: Button
     private lateinit var btnHeaderSettings: Button
-    private lateinit var btnHeaderLogs: Button
-    private lateinit var btnHeaderAbout: Button
     private lateinit var recyclerDevices: RecyclerView
 
     override fun attachBaseContext(newBase: Context) {
@@ -96,11 +93,8 @@ class MainActivity : AppCompatActivity() {
         textServerAddress = findViewById(R.id.textServerAddress)
         btnToggleService = findViewById(R.id.btnToggleService)
         btnHeaderWakeAll = findViewById(R.id.btnHeaderWakeAll)
-        btnHeaderAddDevice = findViewById(R.id.btnHeaderAddDevice)
         btnHeaderScan = findViewById(R.id.btnHeaderScan)
         btnHeaderSettings = findViewById(R.id.btnHeaderSettings)
-        btnHeaderLogs = findViewById(R.id.btnHeaderLogs)
-        btnHeaderAbout = findViewById(R.id.btnHeaderAbout)
         recyclerDevices = findViewById(R.id.recyclerDevices)
     }
 
@@ -123,11 +117,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupListeners() {
         btnHeaderWakeAll.setOnClickListener { wakeAllDevices() }
-        btnHeaderAddDevice.setOnClickListener { showDeviceDialog(null) }
         btnHeaderScan.setOnClickListener { showNetworkScanDialog() }
         btnHeaderSettings.setOnClickListener { showSettingsDialog() }
-        btnHeaderLogs.setOnClickListener { startActivity(Intent(this, LogViewerActivity::class.java)) }
-        btnHeaderAbout.setOnClickListener { showAboutDialog() }
         btnToggleService.setOnClickListener { toggleService() }
     }
 
@@ -452,8 +443,20 @@ class MainActivity : AppCompatActivity() {
         val switchRequireAuth = dialog.findViewById<Switch>(R.id.switchRequireAuth)
         val switchAutoStart = dialog.findViewById<Switch>(R.id.switchAutoStart)
         val spinnerLanguage = dialog.findViewById<Spinner>(R.id.settingsLanguage)
+        val btnSettingsLogs = dialog.findViewById<Button>(R.id.btnSettingsLogs)
+        val btnSettingsAbout = dialog.findViewById<Button>(R.id.btnSettingsAbout)
         val btnCancel = dialog.findViewById<Button>(R.id.btnCancelSettings)
         val btnSave = dialog.findViewById<Button>(R.id.btnSaveSettings)
+
+        btnSettingsLogs?.setOnClickListener {
+            dialog.dismiss()
+            startActivity(Intent(this, LogViewerActivity::class.java))
+        }
+
+        btnSettingsAbout?.setOnClickListener {
+            dialog.dismiss()
+            showAboutDialog()
+        }
 
         // Setup Language Spinner
         val langOptions = listOf(

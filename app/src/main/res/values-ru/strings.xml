@@ -69,6 +69,7 @@
     <string name="label_require_auth">Требовать токен для /wake</string>
     <string name="label_auto_start">Автозапуск при включении устройства</string>
     <string name="label_app_language">Язык приложения / Language / Sprache</string>
+    <string name="label_diagnostics_info">Инструменты и диагностика</string>
     <string name="btn_save_apply">СОХРАНИТЬ И ПРИМЕНИТЬ</string>
 
     <!-- About Dialog -->
