@@ -11,23 +11,23 @@ It operates as an uninterrupted foreground service hosting an embedded **NanoHTT
 
 ---
 
-## 📸 Screenshots & User Interface
+## Screenshots & User Interface
 
-### 📺 Fire TV & Android TV 10-Foot Experience
+### Fire TV & Android TV 10-Foot Experience
 Intuitive TV remote D-pad navigation, high-contrast dark theme, live ICMP/TCP ping status indicators, and one-click Wake action:
 
 ![Fire TV Main Interface](docs/images/firetv_main.png)
 
 ---
 
-### 🌐 Embedded Web Control Dashboard
+### Embedded Web Control Dashboard
 Accessible directly in any browser on your phone, tablet, or PC via local network (`http://<DEVICE_IP>:8085`):
 
 ![Web Control Dashboard](docs/images/web_dashboard.png)
 
 ---
 
-### ⚙️ TV Settings, Auto-Scan & Diagnostics
+### TV Settings, Auto-Scan & Diagnostics
 
 | 2-Column TV Settings Modal | LAN Subnet Scanner & Auto-Discovery |
 | :---: | :---: |
@@ -35,7 +35,7 @@ Accessible directly in any browser on your phone, tablet, or PC via local networ
 
 ---
 
-## ✨ Key Features
+## Key Features
 
 - **Multi-Device Wake-on-LAN**: Manage multiple target devices with custom names, MAC addresses, broadcast addresses, UDP ports (7/9), and device categories (Desktop, Server, Laptop, Console, TV).
 - **10-Foot Leanback UI**: Fully optimized for TV remote D-pad navigation with distinct focus states, safe overscan margins, and dark mode palette.
@@ -50,7 +50,7 @@ Accessible directly in any browser on your phone, tablet, or PC via local networ
 
 ---
 
-## 📥 Installation
+## Installation
 
 ### Requirements
 - Amazon Fire TV (Fire OS 5+) or Android TV (Android 5.1 / API 22 or higher).
@@ -70,7 +70,7 @@ adb -s <DEVICE_IP>:5555 shell am start -n com.vtstv.wolserver/.MainActivity
 
 ---
 
-## 🌐 REST API Reference
+## REST API Reference
 
 The embedded HTTP server listens on port `8085` by default (`http://<DEVICE_IP>:8085`).
 
@@ -102,7 +102,7 @@ When authentication is enabled (`requireAuthentication: true`), API requests mus
 
 ---
 
-## 💡 Home Automation Integrations
+## Home Automation Integrations
 
 ### Home Assistant (`configuration.yaml`)
 
@@ -149,7 +149,7 @@ print(response.json())
 
 ---
 
-## 🛠️ Building from Source
+## Building from Source
 
 ### Prerequisites
 - JDK 17
@@ -173,7 +173,7 @@ cd WOLFireTV
 
 ---
 
-## 📄 License & Author
+## License & Author
 
 - **Author**: Murr ([https://github.com/vtstv](https://github.com/vtstv))
 - **Repository**: [https://github.com/vtstv/WOLServer](https://github.com/vtstv/WOLServer)
