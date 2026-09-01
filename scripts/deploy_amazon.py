@@ -188,10 +188,10 @@ def sync_store_metadata(app_id, edit_id, token):
         print(f"[!] Metadata directory not found at: {METADATA_DIR}")
         return
 
+    # Amazon Appstore supported store locales
     locales = [
         ("en-US", "store_metadata/en-US.json"),
-        ("de-DE", "store_metadata/de-DE.json"),
-        ("ru-RU", "store_metadata/ru-RU.json")
+        ("de-DE", "store_metadata/de-DE.json")
     ]
 
     for locale_code, rel_path in locales:
@@ -204,15 +204,28 @@ def sync_store_metadata(app_id, edit_id, token):
                 meta_json = json.load(f)
 
             url = f"{AMAZON_API_BASE}/applications/{app_id}/edits/{edit_id}/listings/{locale_code}"
+            
+            # Fetch existing listing to get ETag
+            etag = None
+            try:
+                get_req = urllib.request.Request(url, headers={"Authorization": f"Bearer {token}"}, method="GET")
+                with urllib.request.urlopen(get_req, timeout=15) as get_resp:
+                    etag = get_resp.headers.get("ETag")
+            except Exception:
+                pass
+
             data_bytes = json.dumps(meta_json, ensure_ascii=False).encode("utf-8")
+            headers = {
+                "Authorization": f"Bearer {token}",
+                "Content-Type": "application/json; charset=utf-8"
+            }
+            if etag:
+                headers["If-Match"] = etag
 
             req = urllib.request.Request(
                 url,
                 data=data_bytes,
-                headers={
-                    "Authorization": f"Bearer {token}",
-                    "Content-Type": "application/json; charset=utf-8"
-                },
+                headers=headers,
                 method="PUT"
             )
 
@@ -226,14 +239,31 @@ def sync_store_metadata(app_id, edit_id, token):
 
 def publish_edit(app_id, edit_id, token):
     print("[*] Submitting edit for Amazon Appstore review & publishing...")
-    url = f"{AMAZON_API_BASE}/applications/{app_id}/edits/{edit_id}/publish"
+    # Get Edit ETag
+    etag = None
+    try:
+        get_req = urllib.request.Request(
+            f"{AMAZON_API_BASE}/applications/{app_id}/edits/{edit_id}",
+            headers={"Authorization": f"Bearer {token}"},
+            method="GET"
+        )
+        with urllib.request.urlopen(get_req, timeout=15) as get_resp:
+            etag = get_resp.headers.get("ETag")
+    except Exception:
+        pass
+
+    url = f"{AMAZON_API_BASE}/applications/{app_id}/edits/{edit_id}/commit"
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json"
+    }
+    if etag:
+        headers["If-Match"] = etag
+
     req = urllib.request.Request(
         url,
         data=b"{}",
-        headers={
-            "Authorization": f"Bearer {token}",
-            "Content-Type": "application/json"
-        },
+        headers=headers,
         method="POST"
     )
 
@@ -241,8 +271,8 @@ def publish_edit(app_id, edit_id, token):
         with urllib.request.urlopen(req, timeout=30) as resp:
             print("[✓] Edit submitted successfully for publishing to Amazon Appstore!")
     except urllib.error.HTTPError as e:
-        print(f"[!] Could not auto-publish ({e.code}): {e.read().decode('utf-8', 'ignore')}")
-        print("    You can review the uploaded APK and click 'Submit App' in the Developer Console.")
+        print(f"[!] Note on auto-commit ({e.code}): {e.read().decode('utf-8', 'ignore')}")
+        print("    APK and listings are saved in your draft. Click 'Submit App' in Developer Console to complete.")
 
 
 def main():
